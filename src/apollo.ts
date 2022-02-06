@@ -23,8 +23,9 @@ export const disableDarkMode = () => {
   darkModeVar(false);
 };
 
-export const logUserIn = (token: string) => {
+export const logUserIn = (token: string, history: any) => {
   localStorage.setItem(TOKEN, token);
+  history.push(routes.home);
   isLoggedInVar(true);
 };
 

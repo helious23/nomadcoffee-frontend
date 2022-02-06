@@ -2,10 +2,10 @@ import reset from "styled-reset";
 import { createGlobalStyle, DefaultTheme } from "styled-components";
 
 export const darkTheme: DefaultTheme = {
-  accent: "gray",
-  borderColor: "rgb(219,219,219)",
+  accent: "#744924",
+  borderColor: "rgba(255,255,255,0.3)",
   boxBgColor: "black",
-  formBgColor: "#fafafa",
+  formBgColor: "rgba(255,255,255,0.3)",
   fontColor: "lightgray",
   bgColor: "#000",
   facebookColor: "#385285",
@@ -13,7 +13,7 @@ export const darkTheme: DefaultTheme = {
 };
 
 export const lightTheme: DefaultTheme = {
-  accent: "#0095f6",
+  accent: "#c28d4b",
   borderColor: "rgb(219,219,219)",
   boxBgColor: "white",
   formBgColor: "#fafafa",
@@ -38,6 +38,7 @@ export const GlobalStyles = createGlobalStyle`
         font-family: 'Open Sans', sans-serif;
         color: ${(props) => props.theme.fontColor};
         transition: all 0.5s ease-in-out;
+        font-family: 'IBM Plex Sans KR', sans-serif;
     }
     a{
       text-decoration: none;
