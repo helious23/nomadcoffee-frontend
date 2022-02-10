@@ -4,49 +4,41 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: seeCoffeeShops
+// GraphQL fragment: ShopDetailFragment
 // ====================================================
 
-export interface seeCoffeeShops_seeCoffeeShops_photos {
+export interface ShopDetailFragment_photos {
   __typename: "CoffeeShopPhoto";
   url: string;
   id: number;
 }
 
-export interface seeCoffeeShops_seeCoffeeShops_categories {
+export interface ShopDetailFragment_categories {
   __typename: "Category";
   name: string;
   slug: string;
 }
 
-export interface seeCoffeeShops_seeCoffeeShops_user {
+export interface ShopDetailFragment_user {
   __typename: "User";
   username: string;
   avatarURL: string | null;
 }
 
-export interface seeCoffeeShops_seeCoffeeShops {
+export interface ShopDetailFragment {
   __typename: "CoffeeShop";
   id: number;
   name: string;
   latitude: string;
   longitude: string;
   slug: string;
-  photos: (seeCoffeeShops_seeCoffeeShops_photos | null)[] | null;
+  photos: (ShopDetailFragment_photos | null)[] | null;
   likes: number;
   commentNumber: number;
   isLiked: boolean;
   isMine: boolean;
   description: string | null;
-  categories: seeCoffeeShops_seeCoffeeShops_categories[];
-  user: seeCoffeeShops_seeCoffeeShops_user;
+  categories: ShopDetailFragment_categories[];
+  user: ShopDetailFragment_user;
   averageRating: number;
-}
-
-export interface seeCoffeeShops {
-  seeCoffeeShops: (seeCoffeeShops_seeCoffeeShops | null)[] | null;
-}
-
-export interface seeCoffeeShopsVariables {
-  lastId?: number | null;
 }

@@ -10,5 +10,8 @@ declare module "styled-components" {
     bgColor: string;
     facebookColor: string;
     placeholderFontColor: string;
+    menuBgColor: string;
+    linkColor: string;
+    textGrey: string;
   }
 }

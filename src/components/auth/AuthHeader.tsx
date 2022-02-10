@@ -8,11 +8,14 @@ const SAuthHeader = styled.div`
   padding: 0.5rem;
 `;
 
-const AuthLogo = styled.div`
+const AuthLogo = styled(Link)`
   display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 6rem;
   color: ${(props) => props.theme.accent};
   margin: 0.5rem;
-  flex-direction: column;
   font-size: 1.5rem;
   text-transform: uppercase;
   font-family: "Righteous", cursive;
@@ -21,12 +24,10 @@ const AuthLogo = styled.div`
 const AuthHeader = () => {
   return (
     <SAuthHeader>
-      <Link to={routes.home}>
-        <AuthLogo>
-          <span>Nomad</span>
-          <span>Coffee</span>
-        </AuthLogo>
-      </Link>
+      <AuthLogo to={routes.home}>
+        <div>Nomad</div>
+        <div>Coffee</div>
+      </AuthLogo>
     </SAuthHeader>
   );
 };

@@ -35,11 +35,15 @@ interface IDarkModeToggleProps {
 
 const DarkModeToggle: React.FC<IDarkModeToggleProps> = ({ border }) => {
   const isDark = darkModeVar();
+  const toggleDarkClick = () => {
+    if (isDark) {
+      disableDarkMode();
+    } else {
+      enableDarkMode();
+    }
+  };
   return (
-    <DarkModeBtn
-      position={isDark}
-      onClick={isDark ? () => disableDarkMode() : () => enableDarkMode()}
-    >
+    <DarkModeBtn position={isDark} onClick={toggleDarkClick}>
       <Circle position={isDark} border={border} />
     </DarkModeBtn>
   );

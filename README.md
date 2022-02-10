@@ -12,9 +12,14 @@ Making NomadCoffee Frontend with Create React App, Apollo Client, Graphql, Types
 ### Day 13, 14
 - [x] Day off
 
-### Day 15
+### Day 15, 16
 - [x] Login
 - [x] SignUp
 - [x] Header
 - [x] Main Image
 - [x] Daum Map
+
+### Day 17, 18
+- [x] Show CoffeeShops
+- [x] Create CoffeeShop
+- [x] Edit CoffeeShop

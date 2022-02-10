@@ -1,17 +1,16 @@
-import {
-  ApolloClient,
-  createHttpLink,
-  InMemoryCache,
-  makeVar,
-} from "@apollo/client";
+import { ApolloClient, InMemoryCache, makeVar } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 import routes from "./routes";
+import { createUploadLink } from "apollo-upload-client";
+import { onError } from "@apollo/client/link/error";
 
 const TOKEN = "TOKEN";
 const DARK_MODE = "DARK_MODE";
 
 export const isLoggedInVar = makeVar(Boolean(localStorage.getItem(TOKEN)));
 export const darkModeVar = makeVar(Boolean(localStorage.getItem(DARK_MODE)));
+export const profileVar = makeVar(false);
+export const scrollVar = makeVar(false);
 
 export const enableDarkMode = () => {
   localStorage.setItem(DARK_MODE, "enable");
@@ -23,9 +22,8 @@ export const disableDarkMode = () => {
   darkModeVar(false);
 };
 
-export const logUserIn = (token: string, history: any) => {
+export const logUserIn = (token: string) => {
   localStorage.setItem(TOKEN, token);
-  history.push(routes.home);
   isLoggedInVar(true);
 };
 
@@ -36,8 +34,23 @@ export const logUserOut = (history?: any) => {
   window.location.reload();
 };
 
-const httpLink = createHttpLink({
+export const onMenuClose = (visible: boolean) => {
+  if (visible) {
+    profileVar(false);
+  }
+};
+
+const uploadHttpLink = createUploadLink({
   uri: "http://localhost:4000/graphql",
+});
+
+const onErrorLink = onError(({ graphQLErrors, networkError }) => {
+  if (graphQLErrors) {
+    console.log(`GraphQL Error`, graphQLErrors);
+  }
+  if (networkError) {
+    console.log(`Network Error`, networkError);
+  }
 });
 
 const authLink = setContext((_, { headers }) => {
@@ -50,6 +63,22 @@ const authLink = setContext((_, { headers }) => {
 });
 
 export const client = new ApolloClient({
-  link: authLink.concat(httpLink),
-  cache: new InMemoryCache(),
+  link: authLink.concat(onErrorLink).concat(uploadHttpLink),
+  cache: new InMemoryCache({
+    typePolicies: {
+      User: {
+        keyFields: (obj) => `User:${obj.username}`,
+      },
+      Query: {
+        fields: {
+          seeCoffeeShops: {
+            keyArgs: false,
+            merge(existing = [], incoming: any[]) {
+              return [...existing, ...incoming];
+            },
+          },
+        },
+      },
+    },
+  }),
 });

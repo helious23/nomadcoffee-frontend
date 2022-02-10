@@ -1,19 +1,31 @@
 import Header from "./Header";
 import styled from "styled-components";
+import { useReactiveVar } from "@apollo/client";
+import { profileVar, onMenuClose } from "../apollo";
 
-const Content = styled.div`
-  margin: 0 auto;
-  margin-top: 2rem;
-  max-width: 80vw;
-  width: 100%;
+const Container = styled.div`
+  min-height: 100%;
+  padding-bottom: 3rem;
 `;
 
-const Layout: React.FC = ({ children }) => {
+interface ILayoutProps {
+  screen: "shopDetail" | "other";
+}
+
+const Content = styled.div<ILayoutProps>`
+  margin: 0 auto;
+  max-width: ${(props) => (props.screen === "other" ? "60vw" : "100vw")};
+  height: 100%;
+  padding: 3rem 0; ;
+`;
+
+const Layout: React.FC<ILayoutProps> = ({ children, screen }) => {
+  const profileVisible = useReactiveVar(profileVar);
   return (
-    <>
+    <Container onClick={() => onMenuClose(profileVisible)}>
       <Header />
-      <Content>{children}</Content>
-    </>
+      <Content screen={screen}>{children}</Content>
+    </Container>
   );
 };
 

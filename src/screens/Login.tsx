@@ -72,7 +72,9 @@ const Login = () => {
       });
     }
     if (token) {
-      logUserIn(token, history);
+      history.push(routes.home);
+      window.location.reload();
+      logUserIn(token);
     }
   };
 

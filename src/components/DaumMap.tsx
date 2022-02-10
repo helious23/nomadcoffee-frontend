@@ -4,11 +4,6 @@
 import { useEffect } from "react";
 import styled from "styled-components";
 
-const Container = styled.div`
-  width: 20rem;
-  height: 20rem;
-`;
-
 const Map = styled.div`
   width: 100%;
   height: 100%;
@@ -40,7 +35,7 @@ const DaumMap: React.FC<IDaumMapProps> = ({
         let container = document.getElementById(id);
         let options = {
           center: new kakao.maps.LatLng(latitude, longitude),
-          level: 7,
+          level: 3,
         };
 
         const map = new window.kakao.maps.Map(container, options);
@@ -55,11 +50,7 @@ const DaumMap: React.FC<IDaumMapProps> = ({
       });
     };
   });
-  return (
-    <Container>
-      <Map id={id}></Map>
-    </Container>
-  );
+  return <Map id={id}></Map>;
 };
 
 export default DaumMap;

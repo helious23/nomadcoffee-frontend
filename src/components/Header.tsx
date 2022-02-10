@@ -1,13 +1,15 @@
 import { useReactiveVar } from "@apollo/client";
-import { Link } from "react-router-dom";
+import { useRouteMatch } from "react-router-dom";
 import styled from "styled-components";
-import { isLoggedInVar, logUserOut } from "../apollo";
+import { isLoggedInVar, profileVar, onMenuClose } from "../apollo";
 import routes from "../routes";
 import { motion, useAnimation, useViewportScroll } from "framer-motion";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import MainLogo from "./header/MainLogo";
-import DarkModeToggle from "./DarkModeToggle";
-import { useMe } from "../hooks/useMe";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import LoggedInHeader from "./header/LoggedInHeader";
+import LoggedOutHeader from "./header/LoggedOutHeader";
 
 const SHeader = styled(motion.header)`
   width: 100%;
@@ -29,38 +31,53 @@ const Wrapper = styled.div`
   align-items: center;
 `;
 
-const Column = styled.div``;
-
-const Icon = styled.span`
-  margin-left: 3rem;
-  cursor: pointer;
-`;
-
-const HeaderText = styled.span`
-  color: white;
-  font-weight: 500;
-  font-size: 1rem;
-`;
-
-const IconsContainer = styled.div`
+const Column = styled.div`
   display: flex;
+`;
+
+const SearchForm = styled.form<{ home: boolean }>`
+  margin-left: 5rem;
+  width: 30vw;
+  display: ${(props) => (props.home ? "none" : "flex")};
+  justify-content: center;
   align-items: center;
-  color: ${(props) => props.theme.bgColor};
+  position: relative;
   svg {
-    font-size: 1.2rem;
+    position: absolute;
+    left: 0.5rem;
+    color: ${(props) => props.theme.textGrey};
+    font-size: 1.5rem;
   }
+`;
+
+const SearchInput = styled.input`
+  width: 100%;
+  height: 100%;
+  padding: 0 2.5rem;
+  border-radius: 5px;
+  outline: none;
+  color: ${(props) => props.theme.fontColor};
+  background-color: ${(props) => props.theme.bgColor};
+  border: 1px solid ${(props) => props.theme.borderColor};
+  transition: all 0.5s ease-in-out;
+  font-size: 1rem;
 `;
 
 const Header = () => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const profileVisible = useReactiveVar(profileVar);
   const { scrollY } = useViewportScroll();
+  const menuAnimation = useAnimation();
   const navAnimation = useAnimation();
-  const { data: userData } = useMe();
+  const homeMatch = useRouteMatch(routes.home);
+  const [home, setHome] = useState(false);
 
   const navVariants = {
     top: {
-      backgroundColor: "rgba(0,0,0,0)",
-      boxShadow: "0px 0px 0px rgba(0, 0, 0, 0)",
+      backgroundColor: home ? "rgba(0,0,0,0)" : "rgba(58, 35, 6, 0.9)",
+      boxShadow: home
+        ? "0px 0px 0px rgba(0, 0, 0, 0)"
+        : "0px 2px 25px rgba(0, 0, 0, 0.5)",
     },
     scroll: {
       backgroundColor: "rgba(58, 35, 6, 0.9)",
@@ -78,53 +95,40 @@ const Header = () => {
     });
   }, [scrollY, navAnimation]);
 
+  useEffect(() => {
+    if (!profileVisible) {
+      menuAnimation.start({
+        scaleY: 0,
+      });
+    }
+  }, [profileVisible, menuAnimation]);
+
+  useEffect(() => {
+    if (homeMatch?.isExact) {
+      setHome(true);
+    }
+  }, [homeMatch?.isExact]);
+
   return (
-    <SHeader animate={navAnimation} initial="top" variants={navVariants}>
+    <SHeader
+      animate={navAnimation}
+      initial="top"
+      variants={navVariants}
+      onClick={() => onMenuClose(profileVisible)}
+    >
       <Wrapper>
         <Column>
           <MainLogo />
+          <SearchForm action="/search" method="GET" home={home}>
+            <FontAwesomeIcon icon={faSearch} />
+            <SearchInput type="text" placeholder="검색" name="term" />
+          </SearchForm>
         </Column>
         <Column>
           {isLoggedIn ? (
-            <IconsContainer>
-              <Icon>
-                <Link to={routes.home}>
-                  <HeaderText>카테고리</HeaderText>
-                </Link>
-              </Icon>
-              <Icon>
-                <Link to={`/likes/${userData?.me?.username}`}>
-                  <HeaderText>위시 리스트</HeaderText>
-                </Link>
-              </Icon>
-              <Icon>
-                <Link to={`/users/${userData?.me?.username}`}>
-                  <HeaderText>프로필</HeaderText>
-                </Link>
-              </Icon>
-              <Icon onClick={() => logUserOut()}>
-                <HeaderText>로그아웃</HeaderText>
-              </Icon>
-              <Icon>
-                <DarkModeToggle />
-              </Icon>
-            </IconsContainer>
+            <LoggedInHeader menuAnimation={menuAnimation} />
           ) : (
-            <IconsContainer>
-              <Icon>
-                <Link to={routes.login}>
-                  <HeaderText>추천 리스트</HeaderText>
-                </Link>
-              </Icon>
-              <Icon>
-                <Link to={routes.login}>
-                  <HeaderText>로그인</HeaderText>
-                </Link>
-              </Icon>
-              <Icon>
-                <DarkModeToggle />
-              </Icon>
-            </IconsContainer>
+            <LoggedOutHeader />
           )}
         </Column>
       </Wrapper>

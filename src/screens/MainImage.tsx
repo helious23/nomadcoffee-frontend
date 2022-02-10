@@ -2,6 +2,10 @@ import styled from "styled-components";
 import mainImage from "../asset/main_cafe_image.jpeg";
 import googlePlay from "../asset/google_play.png";
 import appStore from "../asset/app_store.svg";
+import { useReactiveVar } from "@apollo/client";
+import { profileVar, onMenuClose } from "../apollo";
+
+const Container = styled.div``;
 
 const MainImg = styled.div`
   width: 100%;
@@ -94,8 +98,9 @@ const AppStore = styled.img`
 `;
 
 const MainImage = () => {
+  const profileVisible = useReactiveVar(profileVar);
   return (
-    <>
+    <Container onClick={() => onMenuClose(profileVisible)}>
       <MainImg>
         <MainTitle>
           <Title>개발자들의 믿을 수 있는 솔직한 리뷰!</Title>
@@ -122,7 +127,7 @@ const MainImage = () => {
         <GooglePlay src={googlePlay} />
         <AppStore src={appStore} />
       </StoreImage>
-    </>
+    </Container>
   );
 };
 

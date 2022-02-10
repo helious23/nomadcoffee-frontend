@@ -2,9 +2,12 @@ const routes = {
   home: "/",
   login: "/login",
   signUp: "/sign-up",
-  passwordForget: "/password/reset",
-  profile: "/users/:username",
+  profile: "/profile/:username",
+  editProfile: "/edit-profile/:username",
+  shopDetail: "/shop/:shopId",
   likes: "/likes/:username",
+  createCafe: "/add",
+  search: "/search",
 };
 
 export default routes;

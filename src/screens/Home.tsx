@@ -1,62 +1,68 @@
 import { gql, useQuery } from "@apollo/client";
-import { useState } from "react";
 import PageTitle from "../components/PageTitle";
 import Loading from "../components/Loading";
 import styled from "styled-components";
 import CoffeeShop from "../components/home/CoffeeShop";
+import InfiniteScroll from "react-infinite-scroll-component";
 import {
   seeCoffeeShops,
   seeCoffeeShopsVariables,
 } from "../__generated__/seeCoffeeShops";
+import { SHOP_DETAIL_FRAGMENT } from "../fragments";
+import { useEffect, useState } from "react";
 
-const SEE_COFFEE_SHOPS_QUERY = gql`
-  query seeCoffeeShops($page: Int!) {
-    seeCoffeeShops(page: $page) {
-      id
-      name
-      slug
-      latitude
-      longitude
-      description
-      photos {
-        url
-      }
-      categories {
-        name
-        slug
-      }
-      likes
-      commentNumber
-      averageRating
+export const SEE_COFFEE_SHOPS_QUERY = gql`
+  query seeCoffeeShops($lastId: Int) {
+    seeCoffeeShops(lastId: $lastId) {
+      ...ShopDetailFragment
     }
   }
+  ${SHOP_DETAIL_FRAGMENT}
 `;
 
-const LoaderContainer = styled.div`
-  margin-top: 5rem;
+const Container = styled.div``;
+
+const Title = styled.div`
+  color: ${(props) => props.theme.accent};
+  font-size: 1.5rem;
 `;
 
 const Home = () => {
-  const [page, setPage] = useState(1);
-  const { data, loading } = useQuery<seeCoffeeShops, seeCoffeeShopsVariables>(
-    SEE_COFFEE_SHOPS_QUERY,
-    {
+  const { data, loading, fetchMore } = useQuery<
+    seeCoffeeShops,
+    seeCoffeeShopsVariables
+  >(SEE_COFFEE_SHOPS_QUERY);
+
+  const dataLength = data?.seeCoffeeShops?.length ?? 0;
+
+  const moreFetch = async (lastId: number) => {
+    await fetchMore({
       variables: {
-        page,
+        lastId,
       },
-    }
-  );
+    });
+  };
+
   return loading ? (
-    <LoaderContainer>
-      <Loading size={6} />
-    </LoaderContainer>
+    <Loading size={6} screen={true} />
   ) : (
-    <div>
+    <Container>
       <PageTitle title="홈" />
-      {data?.seeCoffeeShops?.map((shop) =>
-        shop ? <CoffeeShop key={shop.id} {...shop} /> : null
-      )}
-    </div>
+      <Title>찐 개발자들의 추천 카페</Title>
+      <InfiniteScroll
+        dataLength={dataLength}
+        next={() =>
+          data?.seeCoffeeShops &&
+          moreFetch(data.seeCoffeeShops[dataLength - 1]?.id!)
+        }
+        hasMore={true}
+        loader={null}
+      >
+        {data?.seeCoffeeShops?.map((shop) =>
+          shop ? <CoffeeShop key={shop.id} {...shop} /> : null
+        )}
+      </InfiniteScroll>
+    </Container>
   );
 };
 

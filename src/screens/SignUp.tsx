@@ -89,7 +89,7 @@ const SignUp = () => {
       });
     }
     if (ok) {
-      history.push(routes.home, {
+      history.push(routes.login, {
         message: "회원 가입이 완료되었습니다. 로그인 하세요.",
         username,
         password,

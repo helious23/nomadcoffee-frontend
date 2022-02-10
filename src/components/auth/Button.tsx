@@ -34,7 +34,11 @@ export const Button: React.FC<IButtonProps> = ({
 }) => {
   return (
     <SButton disabled={loading ? true : false} valid={Boolean(canClick)}>
-      {loading ? <Loading size={2.2} /> : <ActionText>{actionText}</ActionText>}
+      {loading ? (
+        <Loading size={2.2} screen={false} />
+      ) : (
+        <ActionText>{actionText}</ActionText>
+      )}
     </SButton>
   );
 };

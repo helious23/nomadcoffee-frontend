@@ -10,6 +10,9 @@ export const darkTheme: DefaultTheme = {
   bgColor: "#000",
   facebookColor: "#385285",
   placeholderFontColor: "grey",
+  menuBgColor: "#3c311f",
+  linkColor: "rgb(59, 130, 246)",
+  textGrey: "grey",
 };
 
 export const lightTheme: DefaultTheme = {
@@ -21,12 +24,17 @@ export const lightTheme: DefaultTheme = {
   bgColor: "#FAFAFA",
   facebookColor: "#385285",
   placeholderFontColor: "grey",
+  menuBgColor: "#f5f6fa",
+  linkColor: "rgb(59, 130, 246)",
+  textGrey: "grey",
 };
 
-export const GlobalStyles = createGlobalStyle`
+export const GlobalStyles = createGlobalStyle<{ scroll: boolean }>`
     ${reset}
     input {
-        all:unset;
+      :focus{
+        outline: none;
+      }
     }
     *{
         box-sizing: border-box;
@@ -39,6 +47,7 @@ export const GlobalStyles = createGlobalStyle`
         color: ${(props) => props.theme.fontColor};
         transition: all 0.5s ease-in-out;
         font-family: 'IBM Plex Sans KR', sans-serif;
+        overflow: ${(props) => (props.scroll ? "hidden" : "visible")};
     }
     a{
       text-decoration: none;

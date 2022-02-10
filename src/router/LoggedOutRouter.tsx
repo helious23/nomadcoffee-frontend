@@ -6,6 +6,8 @@ import MainImage from "../screens/MainImage";
 import SignUp from "../screens/SignUp";
 import NotFound from "../screens/NotFound";
 import Login from "../screens/Login";
+import Profile from "../screens/Profile";
+import ShopDetail from "../screens/ShopDetail";
 
 const LoggedOutRouter = () => {
   return (
@@ -14,16 +16,26 @@ const LoggedOutRouter = () => {
         <Route path={routes.home} exact>
           <>
             <MainImage />
-            <Layout>
+            <Layout screen="other">
               <Home />
             </Layout>
           </>
         </Route>
-        <Route path={routes.login}>
+        <Route path={routes.login} exact>
           <Login />
         </Route>
-        <Route path={routes.signUp}>
+        <Route path={routes.signUp} exact>
           <SignUp />
+        </Route>
+        <Route path={routes.profile}>
+          <Layout screen="other">
+            <Profile />
+          </Layout>
+        </Route>
+        <Route path={routes.shopDetail}>
+          <Layout screen="shopDetail">
+            <ShopDetail />
+          </Layout>
         </Route>
         <Route>
           <NotFound />

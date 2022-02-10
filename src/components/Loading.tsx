@@ -1,10 +1,11 @@
 import styled from "styled-components";
 import spinner from "../asset/loading.svg";
 
-const Loader = styled.div`
+const Loader = styled.div<{ screen: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
+  height: ${(props) => (props.screen ? "100vh" : "100%")};
 `;
 
 const Svg = styled.img<{ size: number }>`
@@ -13,11 +14,12 @@ const Svg = styled.img<{ size: number }>`
 
 interface ILoadingProps {
   size: number;
+  screen: boolean;
 }
 
-const Loading: React.FC<ILoadingProps> = ({ size }) => {
+const Loading: React.FC<ILoadingProps> = ({ size, screen }) => {
   return (
-    <Loader>
+    <Loader screen={screen}>
       <Svg src={spinner} size={size}></Svg>
     </Loader>
   );
