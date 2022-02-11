@@ -9,12 +9,17 @@ const Container = styled.div`
 `;
 
 interface ILayoutProps {
-  screen: "shopDetail" | "other";
+  screen: "shopDetail" | "comment" | "other";
 }
 
 const Content = styled.div<ILayoutProps>`
   margin: 0 auto;
-  max-width: ${(props) => (props.screen === "other" ? "60vw" : "100vw")};
+  max-width: ${(props) =>
+    props.screen === "shopDetail"
+      ? "100vw"
+      : props.screen === "comment"
+      ? "40vw"
+      : "60vw"};
   height: 100%;
   padding: 3rem 0; ;
 `;

@@ -282,7 +282,7 @@ const CreateCafe = () => {
   const { handleSubmit, register, formState } = useForm<IFormProps>({
     defaultValues: {
       name: state?.name || "",
-      categories: state?.categories.map((category) => category.name) || [],
+      categories: state?.categories?.map((category) => category.name) || [],
       description: state?.description || "",
     },
   });

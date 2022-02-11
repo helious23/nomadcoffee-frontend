@@ -15,6 +15,7 @@ export const SButton = styled.button<{ valid?: Boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
 `;
 
 const ActionText = styled.div`

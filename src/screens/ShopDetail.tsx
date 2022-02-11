@@ -180,7 +180,6 @@ const ShopDetail = () => {
     scrollVar(true);
   };
 
-  console.log(reviewOpen);
   const handleReviewClose = () => {
     setReviewOpen(false);
     scrollVar(false);
@@ -250,7 +249,12 @@ const ShopDetail = () => {
                       onClick={
                         isLoggedIn
                           ? () => {
-                              console.log("create review");
+                              history.push(
+                                `/comment/${data.seeCoffeeShop?.id}`,
+                                {
+                                  shopName: data.seeCoffeeShop?.name,
+                                }
+                              );
                             }
                           : handleReviewOpen
                       }

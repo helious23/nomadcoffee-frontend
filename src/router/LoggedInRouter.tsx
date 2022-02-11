@@ -7,6 +7,7 @@ import MainImage from "../screens/MainImage";
 import Profile from "../screens/Profile";
 import ShopDetail from "../screens/ShopDetail";
 import CreateCafe from "../screens/CreateCafe";
+import Comment from "../screens/Comment";
 
 const LoggedInRouter = () => {
   return (
@@ -18,19 +19,24 @@ const LoggedInRouter = () => {
             <Home />
           </Layout>
         </Route>
-        <Route path={routes.profile}>
+        <Route path={routes.profile} exact>
           <Layout screen="other">
             <Profile />
           </Layout>
         </Route>
-        <Route path={routes.shopDetail}>
+        <Route path={routes.shopDetail} exact>
           <Layout screen="shopDetail">
             <ShopDetail />
           </Layout>
         </Route>
-        <Route path={routes.createCafe}>
+        <Route path={routes.createCafe} exact>
           <Layout screen="other">
             <CreateCafe />
+          </Layout>
+        </Route>
+        <Route path={routes.comment} exact>
+          <Layout screen="comment">
+            <Comment />
           </Layout>
         </Route>
         <Route>

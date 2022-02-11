@@ -8,6 +8,7 @@ const routes = {
   likes: "/likes/:username",
   createCafe: "/add",
   search: "/search",
+  comment: "/comment/:shopId",
 };
 
 export default routes;
