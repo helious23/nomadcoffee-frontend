@@ -19,7 +19,7 @@ const Content = styled.div<ILayoutProps>`
       ? "100vw"
       : props.screen === "comment"
       ? "40vw"
-      : "60vw"};
+      : "70vw"};
   height: 100%;
   padding: 3rem 0; ;
 `;

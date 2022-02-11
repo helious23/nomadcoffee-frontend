@@ -10,6 +10,7 @@ const AuthInput = styled.input.attrs({ require: true })<IAuthInputProps>`
   border-radius: 3px;
   padding: ${(props) => (props.change ? "1rem 0 0.2rem 0.5rem" : "0.5rem")};
   background-color: ${(props) => props.theme.formBgColor};
+  color: ${(props) => props.theme.fontColor};
   font-size: ${(props) => (props.change ? "0.8rem" : "1rem")};
   border: 0.5px solid
     ${(props) => (props.hasError ? "tomato" : props.theme.borderColor)};

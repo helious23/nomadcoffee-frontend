@@ -70,7 +70,7 @@ const DetailContainer = styled.div`
   margin-top: 0.5rem;
 `;
 const InfoContainer = styled.div`
-  width: 50vw;
+  width: 45vw;
   margin: 3rem 15vw;
 `;
 const InfoDetail = styled.div``;

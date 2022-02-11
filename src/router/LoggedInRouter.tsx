@@ -7,7 +7,7 @@ import MainImage from "../screens/MainImage";
 import Profile from "../screens/Profile";
 import ShopDetail from "../screens/ShopDetail";
 import CreateCafe from "../screens/CreateCafe";
-import Comment from "../screens/Comment";
+import AddOrEditComment from "../screens/AddorEditComment";
 
 const LoggedInRouter = () => {
   return (
@@ -36,7 +36,7 @@ const LoggedInRouter = () => {
         </Route>
         <Route path={routes.comment} exact>
           <Layout screen="comment">
-            <Comment />
+            <AddOrEditComment />
           </Layout>
         </Route>
         <Route>

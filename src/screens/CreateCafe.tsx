@@ -108,6 +108,7 @@ const Container = styled.div`
 const Form = styled.form`
   display: flex;
   flex-direction: column;
+  align-items: center;
 `;
 
 const FormContainer = styled.div`
@@ -178,6 +179,7 @@ const AddressBtn = styled(OutlineBtn)`
 `;
 
 const SubmitBtn = styled(SButton)`
+  width: 20vw;
   cursor: pointer;
   padding: 0.5rem;
 `;
@@ -185,7 +187,9 @@ const SubmitBtn = styled(SButton)`
 const InvisibleInput = styled.input``;
 
 const PhotoContainer = styled.div`
-  width: 100%;
+  width: 60vw;
+  display: flex;
+  justify-content: space-around;
   padding: 10px;
   height: 10rem;
   border: 1px solid ${(props) => props.theme.borderColor};
@@ -200,9 +204,6 @@ const PhotoFile = styled(motion.div)`
   height: 10rem;
   background-size: cover;
   background-position: center center;
-  &:not(:last-child) {
-    margin-right: 1rem;
-  }
 `;
 
 interface IFormProps {
@@ -243,6 +244,7 @@ interface ILocationState {
 const CreateCafe = () => {
   const [addressOpen, setAddressOpen] = useState(false);
   const [addressData, setAddressData] = useState("");
+
   const [latLng, setLatLng] = useState<ILatLng>();
   const [fileList, setFileList] = useState<FileList>();
   const [images, setImages] = useState<ImageInfo[]>([]);
@@ -355,7 +357,7 @@ const CreateCafe = () => {
       }
     );
 
-  const deletePhoto = (photoId: number) => {
+  const deletePhoto = (photoId: number, photoIndex: number) => {
     deleteCoffeeshopPhotoMutation({
       variables: {
         id: photoId,
@@ -445,7 +447,7 @@ const CreateCafe = () => {
                 ) : (
                   <Grid>
                     {categoryData?.seeCategories?.map((category) => (
-                      <div key={category?.id}>
+                      <div key={`Category:${category?.id}`}>
                         {category && (
                           <>
                             <CheckInput
@@ -555,7 +557,7 @@ const CreateCafe = () => {
                             scale: 0,
                             transition: { duration: 1 },
                           }}
-                          // onClick={() => deletePhoto(image.id!)}
+                          // onClick={() => deletePhoto(image.id!, index)}
                           style={{ backgroundImage: `url(${image.localUrl})` }}
                         />
                       );
@@ -570,6 +572,7 @@ const CreateCafe = () => {
                   })}
               </AnimatePresence>
             </PhotoContainer>
+            <div>{images.length}/5</div>
 
             {state?.edit ? (
               <SubmitBtn>카페 수정하기</SubmitBtn>

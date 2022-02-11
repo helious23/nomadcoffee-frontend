@@ -73,7 +73,7 @@ const Action = styled.div`
   svg {
     font-size: 1.2rem;
   }
-  :last-child {
+  :nth-child(4) {
     background-color: ${(props) => props.theme.accent};
     color: white;
   }
@@ -126,13 +126,13 @@ const ConfirmNotice: React.FC<IConfirmNoticeProps> = ({
         <Subtitle>
           <FirstText>{text}</FirstText>
         </Subtitle>
-        <Action onClick={() => onClick("cancel")}>
-          <FontAwesomeIcon icon={faTimes} />
-          <ActionText>취소</ActionText>
-        </Action>
         <Action onClick={() => onClick("create")}>
           <FontAwesomeIcon icon={faPencilAlt} />
           <ActionText>리뷰 작성</ActionText>
+        </Action>
+        <Action onClick={() => onClick("cancel")}>
+          <FontAwesomeIcon icon={faTimes} />
+          <ActionText>취소</ActionText>
         </Action>
       </Text>
     </AnimatePresence>

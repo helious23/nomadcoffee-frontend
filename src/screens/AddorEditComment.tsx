@@ -63,6 +63,8 @@ const TextArea = styled.textarea<{ hasError: boolean }>`
   border-radius: 3px;
   font-size: 1rem;
   z-index: 10;
+  line-height: 1.5rem;
+  white-space: pre-wrap;
 `;
 
 const TextPlaceholder = styled.div<{ invisible: boolean }>`
@@ -159,6 +161,7 @@ const Comment = () => {
 
   const onCompleted = () => {
     alert("리뷰가 작성 되었습니다.");
+    history.goBack();
   };
 
   const [createCommentMutation, { loading }] = useMutation<
@@ -183,7 +186,6 @@ const Comment = () => {
         shopId: +shopId,
       },
     });
-    history.goBack();
   };
 
   useEffect(() => {
