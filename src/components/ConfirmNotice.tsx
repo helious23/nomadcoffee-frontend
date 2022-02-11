@@ -1,4 +1,5 @@
-import { faTimes, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useViewportScroll, motion, AnimatePresence } from "framer-motion";
 import styled from "styled-components";
@@ -92,6 +93,7 @@ interface IConfirmNoticeProps {
   handleClose: () => void;
   text: string;
   title: string;
+  iconName: IconProp;
 }
 
 const ConfirmNotice: React.FC<IConfirmNoticeProps> = ({
@@ -99,6 +101,7 @@ const ConfirmNotice: React.FC<IConfirmNoticeProps> = ({
   handleClose,
   title,
   text,
+  iconName,
 }) => {
   const { scrollY } = useViewportScroll();
 
@@ -127,8 +130,8 @@ const ConfirmNotice: React.FC<IConfirmNoticeProps> = ({
           <FirstText>{text}</FirstText>
         </Subtitle>
         <Action onClick={() => onClick("create")}>
-          <FontAwesomeIcon icon={faPencilAlt} />
-          <ActionText>리뷰 작성</ActionText>
+          <FontAwesomeIcon icon={iconName} />
+          <ActionText>{title}</ActionText>
         </Action>
         <Action onClick={() => onClick("cancel")}>
           <FontAwesomeIcon icon={faTimes} />

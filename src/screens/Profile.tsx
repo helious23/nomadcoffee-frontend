@@ -278,7 +278,7 @@ const Profile = () => {
     const { isMe, isFollowing } = seeProfile;
     if (isMe) {
       return (
-        <Link to={`/edit-profile/${userData?.me?.username}/edit`}>
+        <Link to={`/edit-profile/${userData?.me?.username}`}>
           <OutlineBtn>프로필 수정</OutlineBtn>
         </Link>
       );

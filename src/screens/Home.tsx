@@ -43,7 +43,7 @@ const Home = () => {
   };
 
   return loading ? (
-    <Loading size={6} screen={true} />
+    <Loading size={6} screen={false} />
   ) : (
     <Container>
       <PageTitle title="홈" />

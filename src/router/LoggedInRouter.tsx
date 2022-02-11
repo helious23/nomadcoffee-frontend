@@ -8,6 +8,7 @@ import Profile from "../screens/Profile";
 import ShopDetail from "../screens/ShopDetail";
 import CreateCafe from "../screens/CreateCafe";
 import AddOrEditComment from "../screens/AddorEditComment";
+import EditProfile from "../screens/EditProfile";
 
 const LoggedInRouter = () => {
   return (
@@ -22,6 +23,11 @@ const LoggedInRouter = () => {
         <Route path={routes.profile} exact>
           <Layout screen="other">
             <Profile />
+          </Layout>
+        </Route>
+        <Route path={routes.editProfile} exact>
+          <Layout screen="other">
+            <EditProfile />
           </Layout>
         </Route>
         <Route path={routes.shopDetail} exact>

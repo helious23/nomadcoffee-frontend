@@ -33,6 +33,9 @@ import {
   editCoffeeShopVariables,
 } from "../__generated__/editCoffeeShop";
 import { AnimatePresence, motion } from "framer-motion";
+import { scrollVar } from "../apollo";
+import ConfirmNotice from "../components/ConfirmNotice";
+import { faEdit } from "@fortawesome/free-regular-svg-icons";
 
 const DELETE_COFFEESHOP_PHOTO = gql`
   mutation deleteCoffeeShopPhoto($id: Int!) {
@@ -251,6 +254,17 @@ const CreateCafe = () => {
   const history = useHistory();
   const { state } = useLocation<ILocationState>();
 
+  const [open, setOpen] = useState(false);
+
+  const handleOpen = () => {
+    setOpen(true);
+    scrollVar(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+    scrollVar(false);
+  };
+
   useEffect(() => {
     if (fileList && fileList.length > 0) {
       const length = fileList.length > 5 ? 5 : fileList.length;
@@ -281,7 +295,7 @@ const CreateCafe = () => {
     }
   }, [state?.edit, state?.latitude, state?.longitude, state?.photos]);
 
-  const { handleSubmit, register, formState } = useForm<IFormProps>({
+  const { handleSubmit, register, formState, getValues } = useForm<IFormProps>({
     defaultValues: {
       name: state?.name || "",
       categories: state?.categories?.map((category) => category.name) || [],
@@ -365,14 +379,14 @@ const CreateCafe = () => {
     });
   };
 
-  const onValid: SubmitHandler<IFormProps> = ({
-    name,
-    description,
-    latitude,
-    longitude,
-    categories,
-  }) => {
+  const onValid: SubmitHandler<IFormProps> = () => {
+    handleOpen();
+  };
+
+  const mutationTrigger = () => {
+    handleClose();
     if (loading) return;
+    const { name, description, categories, latitude, longitude } = getValues();
 
     if (state?.edit) {
       editCoffeeShopMutation({
@@ -530,6 +544,7 @@ const CreateCafe = () => {
                 accept="image/*"
                 multiple
                 id="photo"
+                maxLength={5}
                 {...register("photos", {
                   required: state?.edit ? false : true,
                 })}
@@ -581,6 +596,15 @@ const CreateCafe = () => {
             )}
           </Form>
         )}
+        {open ? (
+          <ConfirmNotice
+            handleClose={handleClose}
+            mutationTrigger={mutationTrigger}
+            title={"카페 등록"}
+            text={`카페를 등록 하시겠습니까?`}
+            iconName={faEdit}
+          />
+        ) : null}
       </Container>
     </>
   );

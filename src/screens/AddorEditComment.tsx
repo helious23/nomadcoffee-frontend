@@ -15,6 +15,7 @@ import {
 import { scrollVar } from "../apollo";
 import ConfirmNotice from "../components/ConfirmNotice";
 import { useHistory } from "react-router";
+import { faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 
 const CREATE_COMMENT = gql`
   mutation createComment($shopId: Int!, $payload: String!, $rating: Int!) {
@@ -267,6 +268,7 @@ const Comment = () => {
           mutationTrigger={mutationTrigger}
           title={"리뷰 작성"}
           text={`리뷰를 작성 하시겠습니까?`}
+          iconName={faPencilAlt}
         />
       ) : null}
     </Container>
