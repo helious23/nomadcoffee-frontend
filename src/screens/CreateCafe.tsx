@@ -2,7 +2,15 @@ import styled from "styled-components";
 import PageTitle from "../components/PageTitle";
 import { useForm, SubmitHandler, SubmitErrorHandler } from "react-hook-form";
 import { useEffect, useState } from "react";
-import { gql, useQuery, useMutation } from "@apollo/client";
+import {
+  gql,
+  useQuery,
+  useMutation,
+  MutationUpdaterFunction,
+  DefaultContext,
+  ApolloCache,
+  Reference,
+} from "@apollo/client";
 import { seeCategories } from "../__generated__/seeCategories";
 import Loading from "../components/Loading";
 import { OutlineBtn } from "../components/shared";
@@ -17,9 +25,24 @@ import { useHistory, useLocation } from "react-router-dom";
 import routes from "../routes";
 import LatLngToAddress from "../components/LatLngToAddress";
 import {
+  deleteCoffeeShopPhoto,
+  deleteCoffeeShopPhotoVariables,
+} from "../__generated__/deleteCoffeeShopPhoto";
+import {
   editCoffeeShop,
   editCoffeeShopVariables,
 } from "../__generated__/editCoffeeShop";
+import { AnimatePresence, motion } from "framer-motion";
+
+const DELETE_COFFEESHOP_PHOTO = gql`
+  mutation deleteCoffeeShopPhoto($id: Int!) {
+    deleteCoffeeShopPhoto(id: $id) {
+      ok
+      error
+      id
+    }
+  }
+`;
 
 const SEE_CATEGORIES = gql`
   query seeCategories {
@@ -131,10 +154,11 @@ const Grid = styled.div`
   }
 `;
 
-const CheckInput = styled.input`
+const CheckInput = styled.input<{ hasError: boolean }>`
   padding: 1rem;
   background-color: ${(props) => props.theme.bgColor};
-  border: 1px solid ${(props) => props.theme.borderColor};
+  border: 0.5px solid
+    ${(props) => (props.hasError ? "tomato" : props.theme.borderColor)};
   border-radius: 5px;
 `;
 
@@ -171,7 +195,7 @@ const PhotoContainer = styled.div`
   margin: 0.5rem 0;
 `;
 
-const PhotoFile = styled.div`
+const PhotoFile = styled(motion.div)`
   width: 10rem;
   height: 10rem;
   background-size: cover;
@@ -196,6 +220,7 @@ interface ILatLng {
 
 type ImageInfo = {
   localUrl: string | ArrayBuffer | null;
+  id?: number;
 };
 
 interface ILocationState {
@@ -229,7 +254,6 @@ const CreateCafe = () => {
       const length = fileList.length > 5 ? 5 : fileList.length;
       for (let i = 0; i < length; i++) {
         const file = fileList[i];
-        console.log(file);
         const reader = new FileReader();
         reader.readAsDataURL(file);
 
@@ -246,14 +270,14 @@ const CreateCafe = () => {
         const length = state.photos.length > 5 ? 5 : state.photos.length;
         for (let i = 0; i < length; i++) {
           const file = state.photos[i];
-          setImages((prev) => [...prev, { localUrl: file.url }]);
+          setImages((prev) => [...prev, { localUrl: file.url, id: file.id }]);
         }
       }
       if (state.latitude && state.longitude) {
         setLatLng({ latitude: state.latitude, longitude: state.longitude });
       }
     }
-  }, [state?.edit]);
+  }, [state?.edit, state?.latitude, state?.longitude, state?.photos]);
 
   const { handleSubmit, register, formState } = useForm<IFormProps>({
     defaultValues: {
@@ -265,6 +289,39 @@ const CreateCafe = () => {
 
   const { data: categoryData, loading: categoryLoading } =
     useQuery<seeCategories>(SEE_CATEGORIES);
+
+  const updateDeletePhoto: MutationUpdaterFunction<
+    deleteCoffeeShopPhoto,
+    deleteCoffeeShopPhotoVariables,
+    DefaultContext,
+    ApolloCache<any>
+  > = (cache, result) => {
+    if (result.data) {
+      const {
+        data: {
+          deleteCoffeeShopPhoto: { ok, id: photoId },
+        },
+      } = result;
+      console.log(result);
+      if (ok) {
+        cache.evict({
+          id: `CoffeeShopPhoto:${photoId}`,
+        });
+        cache.modify({
+          id: `CoffeeShop:${state.shopId}`,
+          fields: {
+            photos(prev: Reference[]) {
+              const remain = prev.filter(
+                (photo) => photo.__ref !== `CoffeeShopPhoto:${photoId}`
+              );
+              console.log(remain);
+              return [...remain];
+            },
+          },
+        });
+      }
+    }
+  };
 
   const onCompleted = () => {
     if (state?.edit) {
@@ -289,6 +346,22 @@ const CreateCafe = () => {
   >(EDIT_COFFEE_SHOP, {
     onCompleted,
   });
+
+  const [deleteCoffeeshopPhotoMutation, { loading: deletePhotoLoading }] =
+    useMutation<deleteCoffeeShopPhoto, deleteCoffeeShopPhotoVariables>(
+      DELETE_COFFEESHOP_PHOTO,
+      {
+        update: updateDeletePhoto,
+      }
+    );
+
+  const deletePhoto = (photoId: number) => {
+    deleteCoffeeshopPhotoMutation({
+      variables: {
+        id: photoId,
+      },
+    });
+  };
 
   const onValid: SubmitHandler<IFormProps> = ({
     name,
@@ -378,7 +451,10 @@ const CreateCafe = () => {
                             <CheckInput
                               type="checkbox"
                               id={category?.id + ""}
-                              {...register("categories")}
+                              {...register("categories", {
+                                required: true,
+                              })}
+                              hasError={Boolean(formState.errors.categories)}
                               value={category.name}
                             />
                             <CheckboxLabel htmlFor={category.id + ""}>
@@ -447,7 +523,7 @@ const CreateCafe = () => {
             </FormContainer>
             <FormContainer>
               <Label htmlFor="photo">카페 사진</Label>
-              <input
+              <Input
                 type="file"
                 accept="image/*"
                 multiple
@@ -455,18 +531,44 @@ const CreateCafe = () => {
                 {...register("photos", {
                   required: state?.edit ? false : true,
                 })}
+                hasError={Boolean(formState.errors.photos)}
                 onChange={onFileUpload}
               />
             </FormContainer>
 
             <PhotoContainer>
-              {images.length > 0 &&
-                images.map((image, index) => (
-                  <PhotoFile
-                    key={`Photo:${index}`}
-                    style={{ backgroundImage: `url(${image.localUrl})` }}
-                  />
-                ))}
+              <AnimatePresence>
+                {images.length > 0 &&
+                  images.map((image, index) => {
+                    if (image.id) {
+                      return (
+                        <PhotoFile
+                          key={`Photo:${index}`}
+                          initial={{ opacity: 0, scale: 0 }}
+                          animate={{
+                            opacity: 1,
+                            scale: 1,
+                            transition: { duration: 1 },
+                          }}
+                          exit={{
+                            opacity: 0,
+                            scale: 0,
+                            transition: { duration: 1 },
+                          }}
+                          // onClick={() => deletePhoto(image.id!)}
+                          style={{ backgroundImage: `url(${image.localUrl})` }}
+                        />
+                      );
+                    } else {
+                      return (
+                        <PhotoFile
+                          key={`Photo:${index}`}
+                          style={{ backgroundImage: `url(${image.localUrl})` }}
+                        />
+                      );
+                    }
+                  })}
+              </AnimatePresence>
             </PhotoContainer>
 
             {state?.edit ? (

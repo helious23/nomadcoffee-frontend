@@ -151,20 +151,12 @@ const Grid = styled.div`
   padding-bottom: 5rem;
 `;
 
-const PhotoContainer = styled.div``;
-
 const Photo = styled.div<{ bg: string | null | undefined }>`
   background-image: url(${(props) => (props.bg ? props.bg : defaultImage)});
   background-size: cover;
   position: relative;
   cursor: pointer;
 `;
-
-const ShopInfo = styled.div``;
-
-const ShopName = styled.div``;
-
-const ShopAddress = styled.div``;
 
 const Icons = styled.div`
   position: absolute;

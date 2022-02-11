@@ -9,7 +9,6 @@ import {
   seeCoffeeShopsVariables,
 } from "../__generated__/seeCoffeeShops";
 import { SHOP_DETAIL_FRAGMENT } from "../fragments";
-import { useEffect, useState } from "react";
 
 export const SEE_COFFEE_SHOPS_QUERY = gql`
   query seeCoffeeShops($lastId: Int) {

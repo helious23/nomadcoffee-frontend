@@ -15,8 +15,7 @@ const LatLngToAddress: React.FC<IAddressProps> = ({ latitude, longitude }) => {
 
     script.type = "text/javascript";
     script.async = true;
-    script.src =
-      "https://dapi.kakao.com/v2/maps/sdk.js?appkey=6ac687f0179a12faf4ca9a48014908e4&autoload=false&libraries=services";
+    script.src = process.env.REACT_APP_KAKAO_MAP;
 
     document.head.appendChild(script);
 
@@ -33,7 +32,7 @@ const LatLngToAddress: React.FC<IAddressProps> = ({ latitude, longitude }) => {
         geocoder.coord2Address(coord.getLng(), coord.getLat(), callback);
       });
     };
-  }, []);
+  }, [latitude, longitude]);
 
   return <div>{address}</div>;
 };

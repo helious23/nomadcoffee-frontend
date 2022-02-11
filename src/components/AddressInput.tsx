@@ -16,8 +16,7 @@ const AddressInput: React.FC<IAddressInputProps> = ({
     const script = document.createElement("script");
     script.type = "text/javascript";
     script.async = true;
-    script.src =
-      "https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js";
+    script.src = process.env.REACT_APP_DAUM_POSTCODE;
     document.head.appendChild(script);
 
     script.onload = () => {

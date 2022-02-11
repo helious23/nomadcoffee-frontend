@@ -22,7 +22,8 @@ const Overlay = styled(motion.div)`
 const Text = styled.div`
   width: 20vw;
   height: 50vh;
-  background-color: ${(props) => props.theme.menuBgColor};
+  background-color: ${(props) => props.theme.bgColor};
+  border: 1px solid ${(props) => props.theme.fontColor};
   z-index: 30;
   position: absolute;
   left: 0;

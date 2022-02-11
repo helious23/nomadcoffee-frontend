@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { seeCoffeeShops_seeCoffeeShops } from "../../__generated__/seeCoffeeShops";
 import defaultImage from "../../asset/default_cafe_img.jpeg";
-import { Link, useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Avatar from "../Avatar";
 import { Category, FatText } from "../shared";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -185,8 +185,6 @@ const CoffeeShop: React.FC<seeCoffeeShops_seeCoffeeShops> = ({
     setOpen(false);
     scrollVar(false);
   };
-
-  const history = useHistory();
 
   return (
     <Container>

@@ -2,7 +2,7 @@ import DaumMap from "../components/DaumMap";
 import defaultImage from "../asset/default_cafe_img.jpeg";
 import styled from "styled-components";
 import PageTitle from "../components/PageTitle";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { gql, useQuery } from "@apollo/client";
 import { SHOP_DETAIL_FRAGMENT } from "../fragments";
 import {
@@ -11,16 +11,17 @@ import {
 } from "../__generated__/seeCoffeeShop";
 import Loading from "../components/Loading";
 import Likes from "../components/Likes";
-import { useEffect, useState } from "react";
-import { scrollVar } from "../apollo";
+import { useState } from "react";
+import { isLoggedInVar, scrollVar } from "../apollo";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
+import { faPencilAlt, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { faStar as SolidStar } from "@fortawesome/free-solid-svg-icons";
 import LoginNotice from "../components/LoginNotice";
 import { Category } from "../components/shared";
 import LatLngToAddress from "../components/LatLngToAddress";
 import routes from "../routes";
 import { useHistory } from "react-router";
+import { AnimatePresence, motion } from "framer-motion";
 
 const SEE_COFFEE_SHOP_QUERY = gql`
   query seeCoffeeShop($id: Int!) {
@@ -55,7 +56,7 @@ interface IPhotoProps {
   url: string | null | undefined;
 }
 
-const Photo = styled.div<IPhotoProps>`
+const Photo = styled(motion.div)<IPhotoProps>`
   width: 25vw;
   height: 100%;
   background-image: url(${(props) => (props.url ? props.url : defaultImage)});
@@ -149,7 +150,7 @@ const LikeNumber = styled.div`
 
 const Comments = styled.div``;
 
-const MapContainer = styled.div`
+const MapContainer = styled(motion.div)`
   width: 25vw;
   height: 25rem;
 `;
@@ -161,7 +162,9 @@ interface IParamProps {
 const ShopDetail = () => {
   const { shopId } = useParams<IParamProps>();
   const [open, setOpen] = useState(false);
+  const [reviewOpen, setReviewOpen] = useState(false);
   const history = useHistory();
+  const isLoggedIn = isLoggedInVar();
 
   const { data, loading } = useQuery<seeCoffeeShop, seeCoffeeShopVariables>(
     SEE_COFFEE_SHOP_QUERY,
@@ -172,7 +175,16 @@ const ShopDetail = () => {
     }
   );
 
-  console.log(data);
+  const handleReviewOpen = () => {
+    setReviewOpen(true);
+    scrollVar(true);
+  };
+
+  console.log(reviewOpen);
+  const handleReviewClose = () => {
+    setReviewOpen(false);
+    scrollVar(false);
+  };
 
   const handleOpen = () => {
     setOpen(true);
@@ -191,9 +203,20 @@ const ShopDetail = () => {
         <>
           <PageTitle title={data.seeCoffeeShop.name} />
           <PhotoContainer>
-            {data.seeCoffeeShop.photos?.map((photo) => (
-              <Photo url={photo?.url} key={photo?.id} />
-            ))}
+            <AnimatePresence>
+              {data.seeCoffeeShop.photos?.map((photo) => (
+                <Photo
+                  url={photo?.url}
+                  key={photo?.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                    transition: { duration: 1 },
+                  }}
+                />
+              ))}
+            </AnimatePresence>
           </PhotoContainer>
           <DetailContainer>
             <InfoContainer>
@@ -219,14 +242,29 @@ const ShopDetail = () => {
                           })
                         }
                       >
-                        <FontAwesomeIcon icon={faEdit} />
+                        <FontAwesomeIcon icon={faPlus} />
                         <Write>정보 수정</Write>
                       </Icon>
                     ) : null}
-                    <Icon>
+                    <Icon
+                      onClick={
+                        isLoggedIn
+                          ? () => {
+                              console.log("create review");
+                            }
+                          : handleReviewOpen
+                      }
+                    >
                       <FontAwesomeIcon icon={faPencilAlt} />
                       <Write>리뷰 쓰기</Write>
                     </Icon>
+                    {reviewOpen ? (
+                      <LoginNotice
+                        handleClose={handleReviewClose}
+                        text={`이 카페의 리뷰를`}
+                        text2={"작성할 수 있어요"}
+                      />
+                    ) : null}
                     <Likes
                       handleOpen={handleOpen}
                       id={data.seeCoffeeShop.id}
@@ -235,7 +273,7 @@ const ShopDetail = () => {
                     {open ? (
                       <LoginNotice
                         handleClose={handleClose}
-                        text={`가고 싶은 식당을`}
+                        text={`가고 싶은 카페를`}
                         text2={"저장할 수 있어요"}
                       />
                     ) : null}
@@ -275,14 +313,19 @@ const ShopDetail = () => {
               </InfoDetail>
               <Comments></Comments>
             </InfoContainer>
-            <MapContainer>
-              <DaumMap
-                title={data.seeCoffeeShop.name}
-                latitude={data.seeCoffeeShop.latitude}
-                longitude={data.seeCoffeeShop.longitude}
-                id={data.seeCoffeeShop.id}
-              />
-            </MapContainer>
+            <AnimatePresence>
+              <MapContainer
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0, transition: { duration: 1 } }}
+              >
+                <DaumMap
+                  title={data.seeCoffeeShop.name}
+                  latitude={data.seeCoffeeShop.latitude}
+                  longitude={data.seeCoffeeShop.longitude}
+                  id={data.seeCoffeeShop.id}
+                />
+              </MapContainer>
+            </AnimatePresence>
           </DetailContainer>
         </>
       )}
