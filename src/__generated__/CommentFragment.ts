@@ -10,6 +10,7 @@
 export interface CommentFragment_user {
   __typename: "User";
   username: string;
+  avatarURL: string | null;
 }
 
 export interface CommentFragment {
@@ -18,5 +19,6 @@ export interface CommentFragment {
   createdAt: string;
   payload: string;
   isMine: boolean;
+  rating: number;
   user: CommentFragment_user;
 }

@@ -22,8 +22,10 @@ export const COMMENT_FRAGMENT = gql`
     createdAt
     payload
     isMine
+    rating
     user {
       username
+      avatarURL
     }
   }
 `;

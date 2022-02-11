@@ -146,7 +146,7 @@ const Comment = () => {
     scrollVar(false);
   };
 
-  const { handleSubmit, formState, register, watch, getValues } =
+  const { handleSubmit, formState, register, getValues } =
     useForm<IFormProps>();
 
   const [currentValue, setCurrentValue] = useState("");

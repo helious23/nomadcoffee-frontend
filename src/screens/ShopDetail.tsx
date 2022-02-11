@@ -22,6 +22,7 @@ import LatLngToAddress from "../components/LatLngToAddress";
 import routes from "../routes";
 import { useHistory } from "react-router";
 import { AnimatePresence, motion } from "framer-motion";
+import Comments from "../components/home/Comments";
 
 const SEE_COFFEE_SHOP_QUERY = gql`
   query seeCoffeeShop($id: Int!) {
@@ -147,8 +148,6 @@ const CommentNumber = styled.div``;
 const LikeNumber = styled.div`
   margin-left: 0.5rem;
 `;
-
-const Comments = styled.div``;
 
 const MapContainer = styled(motion.div)`
   width: 25vw;
@@ -315,7 +314,8 @@ const ShopDetail = () => {
                   ))}
                 </Detail>
               </InfoDetail>
-              <Comments></Comments>
+              <Seperator />
+              <Comments {...data.seeCoffeeShop} />
             </InfoContainer>
             <AnimatePresence>
               <MapContainer

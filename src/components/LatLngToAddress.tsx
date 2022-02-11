@@ -1,4 +1,3 @@
-import { Map, Marker, MarkerClusterer, Polyline } from "react-kakao-maps";
 import { useEffect, useState } from "react";
 
 interface IAddressProps {
@@ -23,7 +22,7 @@ const LatLngToAddress: React.FC<IAddressProps> = ({ latitude, longitude }) => {
       //@ts-ignore
       geocoder.coord2Address(coord.getLng(), coord.getLat(), callback);
     });
-  }, [kakao]);
+  }, [kakao, latitude, longitude]);
 
   return <div>{address}</div>;
 };

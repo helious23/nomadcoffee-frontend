@@ -1,8 +1,4 @@
-import {
-  faCoffee,
-  faTimes,
-  faPencilAlt,
-} from "@fortawesome/free-solid-svg-icons";
+import { faTimes, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useViewportScroll, motion, AnimatePresence } from "framer-motion";
 import styled from "styled-components";

@@ -19,7 +19,7 @@ const AddressToLatLng: React.FC<IAddressProps> = ({ address, setLatLng }) => {
       //@ts-ignore
       geocoder.addressSearch(address, callback);
     });
-  }, [kakao]);
+  }, [kakao, address, setLatLng]);
 
   return <div></div>;
 };
