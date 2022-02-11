@@ -1,3 +1,4 @@
+import { Map, Marker, MarkerClusterer, Polyline } from "react-kakao-maps";
 import { useEffect, useState } from "react";
 
 interface IAddressProps {
@@ -9,6 +10,7 @@ const LatLngToAddress: React.FC<IAddressProps> = ({ latitude, longitude }) => {
   const [address, setAddress] = useState();
   //@ts-ignore
   const kakao = window.kakao;
+  console.log(kakao);
 
   useEffect(() => {
     kakao.maps.load(() => {
