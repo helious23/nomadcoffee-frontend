@@ -10,7 +10,6 @@ const LatLngToAddress: React.FC<IAddressProps> = ({ latitude, longitude }) => {
   const [address, setAddress] = useState();
   //@ts-ignore
   const kakao = window.kakao;
-  console.log(kakao);
 
   useEffect(() => {
     kakao.maps.load(() => {
