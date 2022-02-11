@@ -42,6 +42,10 @@ const Home = () => {
     });
   };
 
+  //@ts-ignore
+  const kakao = window.kakao;
+  console.log(kakao);
+
   return loading ? (
     <Loading size={6} screen={true} />
   ) : (
