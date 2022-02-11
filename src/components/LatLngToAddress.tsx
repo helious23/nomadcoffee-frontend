@@ -1,4 +1,3 @@
-//@ts-nocheck
 /* global kakao */
 import { useEffect, useState } from "react";
 
@@ -15,16 +14,20 @@ const LatLngToAddress: React.FC<IAddressProps> = ({ latitude, longitude }) => {
 
     script.type = "text/javascript";
     script.async = true;
-    script.src = process.env.REACT_APP_KAKAO_MAP;
+    script.src = process.env.REACT_APP_KAKAO_MAP!;
 
     document.head.appendChild(script);
 
     script.onload = () => {
-      kakao.maps.load(() => {
-        const geocoder = new kakao.maps.services.Geocoder();
-        const coord = new kakao.maps.LatLng(latitude, longitude);
+      //@ts-ignore
+      window.kakao.maps.load(() => {
+        //@ts-ignore
+        const geocoder = new window.kakao.maps.services.Geocoder();
+        //@ts-ignore
+        const coord = new window.kakao.maps.LatLng(latitude, longitude);
         const callback = function (result: any, status: any) {
-          if (status === kakao.maps.services.Status.OK) {
+          //@ts-ignore
+          if (status === window.kakao.maps.services.Status.OK) {
             setAddress(result[0].address.address_name);
           }
         };
