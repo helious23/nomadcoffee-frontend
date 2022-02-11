@@ -6,6 +6,7 @@ import { ThemeProvider } from "styled-components";
 import { darkTheme, GlobalStyles, lightTheme } from "./styles";
 import LoggedInRouter from "./router/LoggedInRouter";
 import LoggedOutRouter from "./router/LoggedOutRouter";
+import KakaoDaumAPi from "./components/KakaoDaumAPi";
 
 function App() {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
@@ -14,6 +15,7 @@ function App() {
   return (
     <ApolloProvider client={client}>
       <HelmetProvider>
+        <KakaoDaumAPi />
         <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
           <GlobalStyles scroll={scroll} />
           {isLoggedIn ? <LoggedInRouter /> : <LoggedOutRouter />}
