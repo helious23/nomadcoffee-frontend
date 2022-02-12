@@ -164,6 +164,7 @@ const ShopDetail = () => {
   const [reviewOpen, setReviewOpen] = useState(false);
   const history = useHistory();
   const isLoggedIn = isLoggedInVar();
+  const kakao = window.kakao;
 
   const { data, loading } = useQuery<seeCoffeeShop, seeCoffeeShopVariables>(
     SEE_COFFEE_SHOP_QUERY,
@@ -296,10 +297,12 @@ const ShopDetail = () => {
                 <Detail>
                   <Label>주소</Label>
                   <Content>
-                    <LatLngToAddress
-                      latitude={data.seeCoffeeShop.latitude}
-                      longitude={data.seeCoffeeShop.longitude}
-                    />
+                    {kakao && (
+                      <LatLngToAddress
+                        latitude={data.seeCoffeeShop.latitude}
+                        longitude={data.seeCoffeeShop.longitude}
+                      />
+                    )}
                   </Content>
                 </Detail>
                 <Detail>

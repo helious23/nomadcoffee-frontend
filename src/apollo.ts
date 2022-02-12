@@ -69,9 +69,9 @@ export const client = new ApolloClient({
   link: authLink.concat(onErrorLink).concat(uploadHttpLink),
   cache: new InMemoryCache({
     typePolicies: {
-      User: {
-        keyFields: (obj) => `User:${obj.username}`,
-      },
+      // User: {
+      //   keyFields: (obj) => `User:${obj.username}`,
+      // },
       Query: {
         fields: {
           seeCoffeeShops: {

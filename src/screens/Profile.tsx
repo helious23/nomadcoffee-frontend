@@ -34,16 +34,16 @@ import { isLoggedInVar } from "../apollo";
 import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
 
 const TOGGLE_FOLLOW_USER = gql`
-  mutation toggleFollow($username: String!) {
-    toggleFollow(username: $username) {
+  mutation toggleFollow($id: Int!) {
+    toggleFollow(id: $id) {
       ok
     }
   }
 `;
 
 const SEE_PROFILE_QUERY = gql`
-  query seeProfile($username: String!, $page: Int!) {
-    seeProfile(username: $username) {
+  query seeProfile($id: Int!, $page: Int!) {
+    seeProfile(id: $id) {
       id
       name
       username
@@ -188,11 +188,11 @@ const Icon = styled.span`
 `;
 
 interface IParams {
-  username: string;
+  userId: string;
 }
 
 const Profile = () => {
-  const { username } = useParams<IParams>();
+  const { userId } = useParams<IParams>();
   const [page, setPage] = useState(1);
   const { data: userData } = useMe();
   const isLoggedIn = isLoggedInVar();
@@ -214,7 +214,7 @@ const Profile = () => {
         return;
       } else {
         cache.modify({
-          id: `User:${username}`,
+          id: `User:${userId}`,
           fields: {
             isFollowing(prev) {
               return !prev;
@@ -224,7 +224,7 @@ const Profile = () => {
                 if (userData?.me) {
                   const { me } = userData;
                   cache.modify({
-                    id: `User:${me.username}`,
+                    id: `User:${me.id}`,
                     fields: {
                       totalFollowing(prev) {
                         return prev - 1;
@@ -237,7 +237,7 @@ const Profile = () => {
                 if (userData?.me) {
                   const { me } = userData;
                   cache.modify({
-                    id: `User:${me.username}`,
+                    id: `User:${me.id}`,
                     fields: {
                       totalFollowing(prev) {
                         return prev + 1;
@@ -258,7 +258,7 @@ const Profile = () => {
     TOGGLE_FOLLOW_USER,
     {
       variables: {
-        username: username,
+        id: +userId,
       },
       update: updateToggleFollow,
       // refetchQueries: [
@@ -271,7 +271,7 @@ const Profile = () => {
     SEE_PROFILE_QUERY,
     {
       variables: {
-        username,
+        id: +userId,
         page,
       },
     }
@@ -281,7 +281,7 @@ const Profile = () => {
     const { isMe, isFollowing } = seeProfile;
     if (isMe) {
       return (
-        <Link to={`/edit-profile/${userData?.me?.username}`}>
+        <Link to={`/edit-profile/${userData?.me?.id}`}>
           <OutlineBtn>프로필 수정</OutlineBtn>
         </Link>
       );

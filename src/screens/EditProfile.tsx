@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import Avatar from "../components/Avatar";
 import PageTitle from "../components/PageTitle";
-import { useMe } from "../hooks/useMe";
+import { ME_QUERY, useMe } from "../hooks/useMe";
 import { useForm } from "react-hook-form";
 import { useState, useEffect } from "react";
 import { scrollVar } from "../apollo";
@@ -192,7 +192,7 @@ const SubmitBtn = styled(SButton)`
 `;
 
 interface IParamsProps {
-  username: string;
+  userId: string;
 }
 
 interface IFormProps {
@@ -211,7 +211,7 @@ type ImageInfo = {
 
 const EditProfile = () => {
   const client = useApolloClient();
-  const { username } = useParams<IParamsProps>();
+  const { userId } = useParams<IParamsProps>();
   const { data: userData } = useMe();
   const [addressOpen, setAddressOpen] = useState(false);
   const [addressData, setAddressData] = useState<string | undefined>(undefined);
@@ -263,7 +263,7 @@ const EditProfile = () => {
       location,
     } = getValues();
     cache.modify({
-      id: `User:${username}`,
+      id: `User:${userId}`,
       fields: {
         username() {
           return newUsername;
@@ -276,7 +276,6 @@ const EditProfile = () => {
         },
         ...(location && {
           location() {
-            console.log(location);
             return location;
           },
         }),
@@ -305,7 +304,7 @@ const EditProfile = () => {
     } else if (ok) {
       updateUserCache(avatarURL);
       alert("프로필이 수정되었습니다");
-      history.push(routes.home);
+      history.goBack();
     }
   };
 
@@ -322,6 +321,7 @@ const EditProfile = () => {
         avatarURL: file,
       },
       onCompleted,
+      // refetchQueries: [ME_QUERY, "me"],
     });
   };
 
@@ -375,7 +375,7 @@ const EditProfile = () => {
 
   return (
     <Container>
-      <PageTitle title={`${username} 님의 프로필`} />
+      <PageTitle title={`${userData?.me?.username} 님의 프로필`} />
       {loading ? (
         <Loading screen={true} size={6} />
       ) : (

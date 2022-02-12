@@ -177,6 +177,8 @@ const CoffeeShop: React.FC<seeCoffeeShops_seeCoffeeShops> = ({
 }) => {
   const [open, setOpen] = useState(false);
 
+  const kakao = window.kakao;
+
   const handleOpen = () => {
     setOpen(true);
     scrollVar(true);
@@ -199,7 +201,9 @@ const CoffeeShop: React.FC<seeCoffeeShops_seeCoffeeShops> = ({
               <Rating> {averageRating}</Rating>
             </TitleDetail>
             <AddressContainer>
-              <LatLngToAddress latitude={latitude} longitude={longitude} />
+              {kakao && (
+                <LatLngToAddress latitude={latitude} longitude={longitude} />
+              )}
             </AddressContainer>
             <Icons>
               <CommentNumber>

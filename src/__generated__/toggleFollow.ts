@@ -17,5 +17,5 @@ export interface toggleFollow {
 }
 
 export interface toggleFollowVariables {
-  username: string;
+  id: number;
 }

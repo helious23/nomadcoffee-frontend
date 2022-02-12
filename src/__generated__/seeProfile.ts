@@ -54,6 +54,6 @@ export interface seeProfile {
 }
 
 export interface seeProfileVariables {
-  username: string;
+  id: number;
   page: number;
 }

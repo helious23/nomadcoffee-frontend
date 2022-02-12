@@ -111,7 +111,7 @@ const LoggedInHeader: React.FC<ILoggedInHeaderProps> = ({ menuAnimation }) => {
         </Link>
       </Icon>
       <Icon>
-        <Link to={`/likes/${userData?.me?.username}`}>
+        <Link to={`/likes/${userData?.me?.id}`}>
           <HeaderText>위시 리스트</HeaderText>
         </Link>
       </Icon>
@@ -127,7 +127,7 @@ const LoggedInHeader: React.FC<ILoggedInHeaderProps> = ({ menuAnimation }) => {
             transition={{ duration: 0.3, type: "linear" }}
             $mouseover={fillMenu}
           >
-            <MenuLink to={`/profile/${userData?.me?.username}`}>
+            <MenuLink to={`/profile/${userData?.me?.id}`}>
               <MenuText
                 onMouseEnter={() => setFillMenu(true)}
                 onMouseLeave={() => setFillMenu(false)}
