@@ -64,7 +64,7 @@ const Action = styled.div`
   font-size: 1rem;
   border: 2px solid ${(props) => props.theme.accent};
   padding: 1rem 2rem;
-  width: 11rem;
+  width: 15vw;
   border-radius: 3rem;
   cursor: pointer;
   display: flex;

@@ -11,6 +11,10 @@ export interface me_me {
   __typename: "User";
   username: string;
   avatarURL: string | null;
+  name: string;
+  email: string;
+  location: string | null;
+  githubUsername: string | null;
 }
 
 export interface me {

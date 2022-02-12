@@ -83,6 +83,7 @@ const Avatar = styled.img`
   width: 10rem;
   border-radius: 50%;
   margin-right: 10rem;
+  transition: all 0.5s ease-in-out;
 `;
 
 const AvatarContainer = styled(Avatar).attrs({ as: "div" })`
@@ -93,6 +94,7 @@ const AvatarContainer = styled(Avatar).attrs({ as: "div" })`
   svg {
     font-size: 6rem;
     color: ${(props) => props.theme.fontColor};
+    transition: all 0.5s ease-in-out;
   }
 `;
 const Column = styled.div``;
@@ -154,6 +156,7 @@ const Grid = styled.div`
 const Photo = styled.div<{ bg: string | null | undefined }>`
   background-image: url(${(props) => (props.bg ? props.bg : defaultImage)});
   background-size: cover;
+  background-position: center;
   position: relative;
   cursor: pointer;
 `;

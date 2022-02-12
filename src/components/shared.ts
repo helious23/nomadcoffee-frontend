@@ -79,7 +79,7 @@ export const Category = styled.div`
 `;
 
 export const OutlineBtn = styled.div`
-  background-color: ${(props) => props.theme.bgColor};
+  background-color: ${(props) => props.theme.boxBgColor};
   border: 2px solid ${(props) => props.theme.accent};
   color: ${(props) => props.theme.accent};
   border-radius: 3px;
@@ -91,4 +91,5 @@ export const OutlineBtn = styled.div`
   align-items: center;
   padding: 0.5rem 1rem;
   cursor: pointer;
+  transition: all 0.5s ease-in-out;
 `;

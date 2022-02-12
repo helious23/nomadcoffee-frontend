@@ -119,6 +119,7 @@ const FormContainer = styled.div`
   align-items: center;
   margin-bottom: 2rem;
   width: 100%;
+  position: relative;
 `;
 
 const Label = styled.label`
@@ -135,12 +136,12 @@ const Input = styled.input<{ hasError: boolean }>`
   border-radius: 5px;
   outline: none;
   color: ${(props) => props.theme.fontColor};
-  background-color: ${(props) => props.theme.bgColor};
+  background-color: ${(props) => props.theme.boxBgColor};
   border: 0.5px solid
     ${(props) => (props.hasError ? "tomato" : props.theme.borderColor)};
   transition: all 0.5s ease-in-out;
   font-size: 1rem;
-  width: 45vw;
+  width: 100%;
 `;
 
 const CheckboxContainer = styled.div`
@@ -160,7 +161,7 @@ const Grid = styled.div`
 
 const CheckInput = styled.input<{ hasError: boolean }>`
   padding: 1rem;
-  background-color: ${(props) => props.theme.bgColor};
+  background-color: ${(props) => props.theme.boxBgColor};
   border: 0.5px solid
     ${(props) => (props.hasError ? "tomato" : props.theme.borderColor)};
   border-radius: 5px;
@@ -173,13 +174,22 @@ const CheckboxLabel = styled.label`
 `;
 
 const AddressText = styled.div`
-  width: 40vw;
+  width: 85%;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
   font-size: 1rem;
+  height: 2.4rem;
+  background-color: ${(props) => props.theme.boxBgColor};
+  border: 0.5px solid ${(props) => props.theme.borderColor};
+  transition: background-color 0.5s ease-in-out, border-color 0.5s ease-in-out;
 `;
 
-const AddressBtn = styled(OutlineBtn)`
-  width: 10rem;
+const AddressBtnContainer = styled.div`
+  width: 15%;
+  margin: 0 1rem;
 `;
+
+const AddressBtn = styled(OutlineBtn)``;
 
 const SubmitBtn = styled(SButton)`
   width: 20vw;
@@ -190,7 +200,7 @@ const SubmitBtn = styled(SButton)`
 const InvisibleInput = styled.input``;
 
 const PhotoContainer = styled.div`
-  width: 60vw;
+  width: 100%;
   display: flex;
   justify-content: space-around;
   padding: 10px;
@@ -200,6 +210,8 @@ const PhotoContainer = styled.div`
   display: flex;
   align-items: center;
   margin: 0.5rem 0;
+  background-color: ${(props) => props.theme.boxBgColor};
+  transition: background-color 0.5s ease-in-out;
 `;
 
 const PhotoFile = styled(motion.div)`
@@ -436,123 +448,124 @@ const CreateCafe = () => {
   };
 
   return (
-    <>
+    <Container>
       <PageTitle title="카페 등록" />
-      <Container>
-        {loading || editLoading ? (
-          <Loading screen={true} size={6} />
-        ) : (
-          <Form onSubmit={handleSubmit(onValid, onNotValid)}>
-            <FormContainer>
-              <Label htmlFor="name">카페 이름</Label>
-              <Input
-                id="name"
-                {...register("name", {
-                  required: true,
-                })}
-                hasError={Boolean(formState.errors.name)}
+      {loading || editLoading ? (
+        <Loading screen={true} size={6} />
+      ) : (
+        <Form onSubmit={handleSubmit(onValid, onNotValid)}>
+          <FormContainer>
+            <Label htmlFor="name">카페 이름</Label>
+            <Input
+              id="name"
+              {...register("name", {
+                required: true,
+              })}
+              hasError={Boolean(formState.errors.name)}
+            />
+          </FormContainer>
+          <FormContainer>
+            <Text>카테고리를 선택하세요</Text>
+            <CheckboxContainer>
+              {categoryLoading ? (
+                <Loading screen={false} size={3} />
+              ) : (
+                <Grid>
+                  {categoryData?.seeCategories?.map((category) => (
+                    <div key={`Category:${category?.id}`}>
+                      {category && (
+                        <>
+                          <CheckInput
+                            type="checkbox"
+                            id={category?.id + ""}
+                            {...register("categories", {
+                              required: true,
+                            })}
+                            hasError={Boolean(formState.errors.categories)}
+                            value={category.name}
+                          />
+                          <CheckboxLabel htmlFor={category.id + ""}>
+                            {category?.name}
+                          </CheckboxLabel>
+                        </>
+                      )}
+                    </div>
+                  ))}
+                </Grid>
+              )}
+            </CheckboxContainer>
+          </FormContainer>
+          <FormContainer>
+            <Text>주소</Text>
+            {addressOpen ? (
+              <AddressInput
+                setAddressOpen={setAddressOpen}
+                setAddressData={setAddressData}
               />
-            </FormContainer>
-            <FormContainer>
-              <Text>카테고리를 선택하세요</Text>
-              <CheckboxContainer>
-                {categoryLoading ? (
-                  <Loading screen={false} size={3} />
-                ) : (
-                  <Grid>
-                    {categoryData?.seeCategories?.map((category) => (
-                      <div key={`Category:${category?.id}`}>
-                        {category && (
-                          <>
-                            <CheckInput
-                              type="checkbox"
-                              id={category?.id + ""}
-                              {...register("categories", {
-                                required: true,
-                              })}
-                              hasError={Boolean(formState.errors.categories)}
-                              value={category.name}
-                            />
-                            <CheckboxLabel htmlFor={category.id + ""}>
-                              {category?.name}
-                            </CheckboxLabel>
-                          </>
-                        )}
-                      </div>
-                    ))}
-                  </Grid>
-                )}
-              </CheckboxContainer>
-            </FormContainer>
-            <FormContainer>
-              <Text>주소</Text>
-              {addressOpen ? (
-                <AddressInput
-                  setAddressOpen={setAddressOpen}
-                  setAddressData={setAddressData}
+            ) : null}
+            <AddressText>
+              {!addressData && state?.latitude && state?.longitude ? (
+                <LatLngToAddress
+                  latitude={state.latitude}
+                  longitude={state.longitude}
                 />
-              ) : null}
-              <AddressText>
-                {!addressData && state?.latitude && state?.longitude ? (
-                  <LatLngToAddress
-                    latitude={state.latitude}
-                    longitude={state.longitude}
-                  />
-                ) : (
-                  <div>{addressData}</div>
-                )}
-              </AddressText>
-              {addressData !== "" && (
-                <AddressToLatLng address={addressData} setLatLng={setLatLng} />
+              ) : (
+                <div>{addressData}</div>
               )}
+            </AddressText>
+            {addressData !== "" && (
+              <AddressToLatLng address={addressData} setLatLng={setLatLng} />
+            )}
 
-              <AddressBtn onClick={onAddressClick}>주소 입력하기</AddressBtn>
-              {latLng && (
-                <>
-                  <InvisibleInput
-                    type="hidden"
-                    {...register("latitude", {
-                      required: true,
-                    })}
-                    value={latLng.latitude}
-                  />
-                  <InvisibleInput
-                    type="hidden"
-                    {...register("longitude", {
-                      required: true,
-                    })}
-                    value={latLng.longitude}
-                  />
-                </>
-              )}
-            </FormContainer>
-            <FormContainer>
-              <Label htmlFor="description">카페 소개</Label>
-              <Input
-                type="text"
-                id="description"
-                {...register("description", {
-                  required: true,
-                })}
-                hasError={Boolean(formState.errors.description)}
-              />
-            </FormContainer>
-            <FormContainer>
-              <Label htmlFor="photo">카페 사진</Label>
-              <Input
-                type="file"
-                accept="image/*"
-                multiple
-                id="photo"
-                maxLength={5}
-                {...register("photos", {
-                  required: state?.edit ? false : true,
-                })}
-                hasError={Boolean(formState.errors.photos)}
-                onChange={onFileUpload}
-              />
-            </FormContainer>
-
+            <AddressBtnContainer>
+              <AddressBtn onClick={onAddressClick}>주소 입력</AddressBtn>
+            </AddressBtnContainer>
+            {latLng && (
+              <>
+                <InvisibleInput
+                  type="hidden"
+                  {...register("latitude", {
+                    required: true,
+                  })}
+                  value={latLng.latitude}
+                />
+                <InvisibleInput
+                  type="hidden"
+                  {...register("longitude", {
+                    required: true,
+                  })}
+                  value={latLng.longitude}
+                />
+              </>
+            )}
+          </FormContainer>
+          <FormContainer>
+            <Label htmlFor="description">카페 소개</Label>
+            <Input
+              type="text"
+              id="description"
+              {...register("description", {
+                required: true,
+              })}
+              hasError={Boolean(formState.errors.description)}
+            />
+          </FormContainer>
+          <FormContainer>
+            <Label htmlFor="photo">카페 사진</Label>
+            <Input
+              type="file"
+              accept="image/*"
+              multiple
+              id="photo"
+              maxLength={5}
+              {...register("photos", {
+                required: state?.edit ? false : true,
+              })}
+              hasError={Boolean(formState.errors.photos)}
+              onChange={onFileUpload}
+            />
+          </FormContainer>
+          <FormContainer>
             <PhotoContainer>
               <AnimatePresence>
                 {images.length > 0 &&
@@ -587,26 +600,26 @@ const CreateCafe = () => {
                   })}
               </AnimatePresence>
             </PhotoContainer>
-            <div>{images.length}/5</div>
+          </FormContainer>
+          <div>{images.length}/5</div>
 
-            {state?.edit ? (
-              <SubmitBtn>카페 수정하기</SubmitBtn>
-            ) : (
-              <SubmitBtn>카페 등록하기</SubmitBtn>
-            )}
-          </Form>
-        )}
-        {open ? (
-          <ConfirmNotice
-            handleClose={handleClose}
-            mutationTrigger={mutationTrigger}
-            title={"카페 등록"}
-            text={`카페를 등록 하시겠습니까?`}
-            iconName={faEdit}
-          />
-        ) : null}
-      </Container>
-    </>
+          {state?.edit ? (
+            <SubmitBtn>카페 수정하기</SubmitBtn>
+          ) : (
+            <SubmitBtn>카페 등록하기</SubmitBtn>
+          )}
+        </Form>
+      )}
+      {open ? (
+        <ConfirmNotice
+          handleClose={handleClose}
+          mutationTrigger={mutationTrigger}
+          title={"카페 등록"}
+          text={`카페를 등록 하시겠습니까?`}
+          iconName={faEdit}
+        />
+      ) : null}
+    </Container>
   );
 };
 

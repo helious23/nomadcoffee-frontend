@@ -49,7 +49,6 @@ const Comments: React.FC<seeCoffeeShops_seeCoffeeShops> = ({
     },
   });
 
-  console.log(data);
   return loading ? (
     <Loading screen={false} size={4} />
   ) : (

@@ -66,6 +66,8 @@ const TextArea = styled.textarea<{ hasError: boolean }>`
   z-index: 10;
   line-height: 1.5rem;
   white-space: pre-wrap;
+  background-color: ${(props) => props.theme.boxBgColor};
+  box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
 `;
 
 const TextPlaceholder = styled.div<{ invisible: boolean }>`
