@@ -52,6 +52,7 @@ export interface seeCoffeeShop_seeCoffeeShop {
   commentNumber: number;
   isLiked: boolean;
   isMine: boolean;
+  address: string | null;
   description: string | null;
   categories: seeCoffeeShop_seeCoffeeShop_categories[];
   user: seeCoffeeShop_seeCoffeeShop_user;
@@ -65,4 +66,5 @@ export interface seeCoffeeShop {
 
 export interface seeCoffeeShopVariables {
   id: number;
+  lastId?: number | null;
 }

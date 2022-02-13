@@ -15,8 +15,8 @@ function App() {
   return (
     <ApolloProvider client={client}>
       <HelmetProvider>
+        <KakaoDaumAPi />
         <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
-          <KakaoDaumAPi />
           <GlobalStyles scroll={scroll} />
           {isLoggedIn ? <LoggedInRouter /> : <LoggedOutRouter />}
         </ThemeProvider>

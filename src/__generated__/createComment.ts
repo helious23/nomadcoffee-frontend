@@ -11,6 +11,7 @@ export interface createComment_createComment {
   __typename: "MutationResponse";
   ok: boolean;
   error: string | null;
+  id: number | null;
 }
 
 export interface createComment {

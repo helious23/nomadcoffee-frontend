@@ -7,7 +7,7 @@ import { Button } from "../components/auth/Button";
 import { useRef, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLaugh, faMeh, faSmile } from "@fortawesome/free-regular-svg-icons";
-import { gql, useMutation } from "@apollo/client";
+import { gql, useMutation, useApolloClient } from "@apollo/client";
 import {
   createComment,
   createCommentVariables,
@@ -16,12 +16,15 @@ import { scrollVar } from "../apollo";
 import ConfirmNotice from "../components/ConfirmNotice";
 import { useHistory } from "react-router";
 import { faPencilAlt } from "@fortawesome/free-solid-svg-icons";
+import { ErrorOutput } from "../components/shared";
+import FormError from "../components/auth/FormError";
 
 const CREATE_COMMENT = gql`
   mutation createComment($shopId: Int!, $payload: String!, $rating: Int!) {
     createComment(shopId: $shopId, payload: $payload, rating: $rating) {
       ok
       error
+      id
     }
   }
 `;
@@ -77,6 +80,7 @@ const TextPlaceholder = styled.div<{ invisible: boolean }>`
   left: 1.1rem;
   font-size: 1rem;
   color: ${(props) => props.theme.borderColor};
+  z-index: 10;
 `;
 
 const RatingContainer = styled.div`
@@ -129,12 +133,14 @@ interface ILocationProps {
 
 interface IFormProps {
   payload: string;
+  result?: string;
 }
 interface IParamsProps {
   shopId: string;
 }
 
 const Comment = () => {
+  const client = useApolloClient();
   const { state } = useLocation<ILocationProps>();
   const { shopId } = useParams<IParamsProps>();
   const { data: userData } = useMe();
@@ -151,20 +157,86 @@ const Comment = () => {
     scrollVar(false);
   };
 
-  const { handleSubmit, formState, register, getValues } =
+  const { handleSubmit, formState, register, getValues, setError } =
     useForm<IFormProps>();
 
-  const [currentValue, setCurrentValue] = useState("");
+  const [currentValue, setCurrentValue] = useState<string | undefined>(
+    undefined
+  );
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const { ref, ...rest } = register("payload", { required: true });
+
+  console.log(currentValue);
 
   const onRatingClick = (value: number) => {
     setRating(value);
   };
 
-  const onCompleted = () => {
-    alert("리뷰가 작성 되었습니다.");
-    history.goBack();
+  const updateCommentCache = (id: number) => {
+    const { cache } = client;
+    const payload = getValues("payload");
+    const newComment = {
+      __typename: "Comment",
+      id,
+      createdAt: Date.now() + "",
+      payload: payload,
+      isMine: true,
+      rating,
+      user: {
+        __typename: "User",
+        username: userData?.me?.username,
+        avatarURL: userData?.me?.avatarURL,
+      },
+    };
+    const newCacheComment = cache.writeFragment({
+      fragment: gql`
+        fragment CommentCache on Comment {
+          id
+          createdAt
+          payload
+          isMine
+          rating
+          user {
+            username
+            avatarURL
+          }
+        }
+      `,
+      data: newComment,
+    });
+    cache.modify({
+      id: "ROOT_QUERY",
+      fields: {
+        seeCoffeeShopComments(prev) {
+          return [newCacheComment, ...prev];
+        },
+      },
+    });
+    cache.modify({
+      id: `CoffeeShop:${shopId}`,
+      fields: {
+        comments(prev) {
+          return [newComment, ...prev];
+        },
+        commentNumber(prev) {
+          return prev + 1;
+        },
+      },
+    });
+  };
+
+  const onCompleted = (data: createComment) => {
+    const {
+      createComment: { ok, error, id },
+    } = data;
+    if (error) {
+      return setError("result", {
+        message: error,
+      });
+    } else if (ok && id) {
+      updateCommentCache(id);
+      history.goBack();
+    }
   };
 
   const [createCommentMutation, { loading }] = useMutation<
@@ -252,12 +324,15 @@ const Comment = () => {
           </FaceContainer>
         </RatingContainer>
         <TextPlaceholder invisible={Boolean(currentValue)}>
-          {userData?.me?.username} 님, 주문하신 메뉴는 어떠셨나요? 카페의
+          {userData?.me?.username} 님, 방문하신 카페는 어떠셨나요? 카페의
           분위기와 메뉴도 궁금해요!
         </TextPlaceholder>
         <CountCountainer>
-          <TextCount> {currentValue.length} / 1000</TextCount>
+          <TextCount> {currentValue?.length || "0"} / 1000</TextCount>
         </CountCountainer>
+        <ErrorOutput>
+          <FormError message={formState?.errors?.result?.message} />
+        </ErrorOutput>
         <Button
           canClick={!Boolean(currentValue)}
           loading={loading}

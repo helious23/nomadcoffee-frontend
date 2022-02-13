@@ -21,6 +21,7 @@ export interface createCoffeeShopVariables {
   name: string;
   latitude: string;
   longitude: string;
+  address?: string | null;
   description?: string | null;
   categories: (string | null)[];
   photos?: (any | null)[] | null;

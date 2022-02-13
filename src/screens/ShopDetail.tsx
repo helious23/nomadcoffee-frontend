@@ -18,17 +18,16 @@ import { faPencilAlt, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { faStar as SolidStar } from "@fortawesome/free-solid-svg-icons";
 import LoginNotice from "../components/LoginNotice";
 import { Category } from "../components/shared";
-import LatLngToAddress from "../components/LatLngToAddress";
 import routes from "../routes";
 import { useHistory } from "react-router";
 import { AnimatePresence, motion } from "framer-motion";
 import Comments from "../components/home/Comments";
 
 const SEE_COFFEE_SHOP_QUERY = gql`
-  query seeCoffeeShop($id: Int!) {
+  query seeCoffeeShop($id: Int!, $lastId: Int) {
     seeCoffeeShop(id: $id) {
       ...ShopDetailFragment
-      comments {
+      comments(lastId: $lastId) {
         user {
           username
           avatarURL
@@ -164,7 +163,6 @@ const ShopDetail = () => {
   const [reviewOpen, setReviewOpen] = useState(false);
   const history = useHistory();
   const isLoggedIn = isLoggedInVar();
-  const kakao = window.kakao;
 
   const { data, loading } = useQuery<seeCoffeeShop, seeCoffeeShopVariables>(
     SEE_COFFEE_SHOP_QUERY,
@@ -234,6 +232,7 @@ const ShopDetail = () => {
                             name: data.seeCoffeeShop?.name,
                             latitude: data.seeCoffeeShop?.latitude,
                             longitude: data.seeCoffeeShop?.longitude,
+                            address: data.seeCoffeeShop?.address,
                             photos: data.seeCoffeeShop?.photos,
                             categories: data.seeCoffeeShop?.categories,
                             description: data.seeCoffeeShop?.description,
@@ -296,14 +295,7 @@ const ShopDetail = () => {
                 <Seperator />
                 <Detail>
                   <Label>주소</Label>
-                  <Content>
-                    {kakao && (
-                      <LatLngToAddress
-                        latitude={data.seeCoffeeShop.latitude}
-                        longitude={data.seeCoffeeShop.longitude}
-                      />
-                    )}
-                  </Content>
+                  <Content>{data.seeCoffeeShop.address}</Content>
                 </Detail>
                 <Detail>
                   <Label>소개</Label>

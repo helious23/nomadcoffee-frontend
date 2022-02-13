@@ -37,6 +37,7 @@ export interface ShopDetailFragment {
   commentNumber: number;
   isLiked: boolean;
   isMine: boolean;
+  address: string | null;
   description: string | null;
   categories: ShopDetailFragment_categories[];
   user: ShopDetailFragment_user;

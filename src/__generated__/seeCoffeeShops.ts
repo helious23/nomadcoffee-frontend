@@ -37,6 +37,7 @@ export interface seeCoffeeShops_seeCoffeeShops {
   commentNumber: number;
   isLiked: boolean;
   isMine: boolean;
+  address: string | null;
   description: string | null;
   categories: seeCoffeeShops_seeCoffeeShops_categories[];
   user: seeCoffeeShops_seeCoffeeShops_user;

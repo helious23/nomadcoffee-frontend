@@ -34,6 +34,7 @@ export const SHOP_DETAIL_FRAGMENT = gql`
   fragment ShopDetailFragment on CoffeeShop {
     ...ShopFragment
     isMine
+    address
     description
     categories {
       name

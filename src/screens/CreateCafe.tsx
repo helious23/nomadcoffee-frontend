@@ -15,7 +15,6 @@ import { seeCategories } from "../__generated__/seeCategories";
 import Loading from "../components/Loading";
 import { OutlineBtn } from "../components/shared";
 import AddressInput from "../components/AddressInput";
-import AddressToLatLng from "../components/AddressToLatLng";
 import { SButton } from "../components/auth/Button";
 import {
   createCoffeeShop,
@@ -23,7 +22,6 @@ import {
 } from "../__generated__/createCoffeeShop";
 import { useHistory, useLocation } from "react-router-dom";
 import routes from "../routes";
-import LatLngToAddress from "../components/LatLngToAddress";
 import {
   deleteCoffeeShopPhoto,
   deleteCoffeeShopPhotoVariables,
@@ -86,6 +84,7 @@ const CREATE_COFFEE_SHOP = gql`
     $name: String!
     $latitude: String!
     $longitude: String!
+    $address: String
     $description: String
     $categories: [String]!
     $photos: [Upload]
@@ -94,6 +93,7 @@ const CREATE_COFFEE_SHOP = gql`
       name: $name
       latitude: $latitude
       longitude: $longitude
+      address: $address
       description: $description
       categories: $categories
       photos: $photos
@@ -173,15 +173,8 @@ const CheckboxLabel = styled.label`
   font-size: 1rem;
 `;
 
-const AddressText = styled.div`
+const AddInput = styled(Input)`
   width: 85%;
-  padding: 0.5rem 1rem;
-  border-radius: 5px;
-  font-size: 1rem;
-  height: 2.4rem;
-  background-color: ${(props) => props.theme.boxBgColor};
-  border: 0.5px solid ${(props) => props.theme.borderColor};
-  transition: background-color 0.5s ease-in-out, border-color 0.5s ease-in-out;
 `;
 
 const AddressBtnContainer = styled.div`
@@ -226,6 +219,7 @@ interface IFormProps {
   latitude: string;
   longitude: string;
   description: string;
+  address: string;
   categories: string[];
   photos: FileList;
 }
@@ -243,6 +237,7 @@ interface ILocationState {
   edit: boolean;
   shopId: number;
   name: string;
+  address: string;
   latitude: string;
   longitude: string;
   photos: {
@@ -304,16 +299,32 @@ const CreateCafe = () => {
       if (state.latitude && state.longitude) {
         setLatLng({ latitude: state.latitude, longitude: state.longitude });
       }
+      if (state.address) {
+        setAddressData(state.address);
+      }
     }
-  }, [state?.edit, state?.latitude, state?.longitude, state?.photos]);
+  }, [
+    state?.edit,
+    state?.latitude,
+    state?.longitude,
+    state?.photos,
+    state?.address,
+  ]);
 
-  const { handleSubmit, register, formState, getValues } = useForm<IFormProps>({
-    defaultValues: {
-      name: state?.name || "",
-      categories: state?.categories?.map((category) => category.name) || [],
-      description: state?.description || "",
-    },
-  });
+  const { handleSubmit, register, formState, getValues, setValue } =
+    useForm<IFormProps>({
+      defaultValues: {
+        name: state?.name || "",
+        categories: state?.categories?.map((category) => category.name) || [],
+        description: state?.description || "",
+      },
+    });
+
+  useEffect(() => {
+    if (addressData) {
+      setValue("address", addressData);
+    }
+  }, [addressData, setValue]);
 
   const { data: categoryData, loading: categoryLoading } =
     useQuery<seeCategories>(SEE_CATEGORIES);
@@ -398,7 +409,7 @@ const CreateCafe = () => {
   const mutationTrigger = () => {
     handleClose();
     if (loading) return;
-    const { name, description, categories, latitude, longitude } = getValues();
+    const { name, categories, latitude, longitude, description } = getValues();
 
     if (state?.edit) {
       editCoffeeShopMutation({
@@ -406,6 +417,7 @@ const CreateCafe = () => {
           id: state?.shopId,
           name,
           description,
+          address: addressData,
           latitude: latLng?.latitude,
           longitude: latLng?.longitude,
           categories,
@@ -418,6 +430,7 @@ const CreateCafe = () => {
         variables: {
           name,
           description,
+          address: addressData,
           latitude,
           longitude,
           categories,
@@ -496,26 +509,19 @@ const CreateCafe = () => {
             </CheckboxContainer>
           </FormContainer>
           <FormContainer>
-            <Text>주소</Text>
+            <Label htmlFor="address">주소</Label>
             {addressOpen ? (
               <AddressInput
                 setAddressOpen={setAddressOpen}
                 setAddressData={setAddressData}
               />
             ) : null}
-            <AddressText>
-              {!addressData && state?.latitude && state?.longitude ? (
-                <LatLngToAddress
-                  latitude={state.latitude}
-                  longitude={state.longitude}
-                />
-              ) : (
-                <div>{addressData}</div>
-              )}
-            </AddressText>
-            {addressData !== "" && (
-              <AddressToLatLng address={addressData} setLatLng={setLatLng} />
-            )}
+            <AddInput
+              type="text"
+              id="address"
+              {...register("address")}
+              hasError={Boolean(formState.errors.address)}
+            />
 
             <AddressBtnContainer>
               <AddressBtn onClick={onAddressClick}>주소 입력</AddressBtn>
@@ -614,8 +620,12 @@ const CreateCafe = () => {
         <ConfirmNotice
           handleClose={handleClose}
           mutationTrigger={mutationTrigger}
-          title={"카페 등록"}
-          text={`카페를 등록 하시겠습니까?`}
+          title={state?.edit ? "카페 수정" : "카페 등록"}
+          text={
+            state?.edit
+              ? `카페를 수정 하시겠습니까?`
+              : `카페를 등록 하시겠습니까?`
+          }
           iconName={faEdit}
         />
       ) : null}

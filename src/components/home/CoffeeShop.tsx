@@ -11,7 +11,6 @@ import { scrollVar } from "../../apollo";
 import LoginNotice from "../LoginNotice";
 import { useState } from "react";
 import Likes from "../Likes";
-import LatLngToAddress from "../LatLngToAddress";
 
 interface ICoffeeShopPhotoProps {
   url: string | null | undefined;
@@ -167,17 +166,13 @@ const CoffeeShop: React.FC<seeCoffeeShops_seeCoffeeShops> = ({
   categories,
   commentNumber,
   description,
-  slug,
+  address,
   likes,
   averageRating,
-  latitude,
-  longitude,
   isLiked,
   user,
 }) => {
   const [open, setOpen] = useState(false);
-
-  const kakao = window.kakao;
 
   const handleOpen = () => {
     setOpen(true);
@@ -200,11 +195,7 @@ const CoffeeShop: React.FC<seeCoffeeShops_seeCoffeeShops> = ({
               <Title to={`/shop/${id}`}>{name}</Title>
               <Rating> {averageRating}</Rating>
             </TitleDetail>
-            <AddressContainer>
-              {kakao && (
-                <LatLngToAddress latitude={latitude} longitude={longitude} />
-              )}
-            </AddressContainer>
+            <AddressContainer>{address}</AddressContainer>
             <Icons>
               <CommentNumber>
                 <FontAwesomeIcon icon={faPencilAlt} />
