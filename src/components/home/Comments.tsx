@@ -2,17 +2,22 @@ import { gql, useQuery } from "@apollo/client";
 import styled from "styled-components";
 import { COMMENT_FRAGMENT } from "../../fragments";
 import { seeCoffeeShops_seeCoffeeShops } from "../../__generated__/seeCoffeeShops";
+
+import Comment from "./Comment";
+import Loading from "../Loading";
 import {
   seeCoffeeShopComments,
   seeCoffeeShopCommentsVariables,
 } from "../../__generated__/seeCoffeeShopComments";
-import Comment from "./Comment";
-import Loading from "../Loading";
 
 const SEE_COFFEE_SHOP_COMMENTS = gql`
   query seeCoffeeShopComments($id: Int!, $lastId: Int) {
     seeCoffeeShopComments(id: $id, lastId: $lastId) {
       ...CommentFragment
+      shop {
+        id
+        name
+      }
     }
   }
   ${COMMENT_FRAGMENT}
@@ -28,6 +33,7 @@ const TitleContainer = styled.div`
   font-size: 1.2rem;
   display: flex;
   align-items: center;
+  margin-bottom: 1rem;
 `;
 const Title = styled.div``;
 const ReviewNumber = styled.div`

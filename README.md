@@ -32,7 +32,7 @@ Making NomadCoffee Frontend with Create React App, Apollo Client, Graphql, Types
 ### Day 20, 21
 - [x] Day Off
 - [x] Edit Profile
-- [ ] Edit Comment
-- [ ] Delete Comment
+- [x] Edit Comment
+- [x] Delete Comment
 - [ ] Delete CoffeeShop
 - [ ] Apollo cache modify

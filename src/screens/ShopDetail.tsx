@@ -28,6 +28,7 @@ const SEE_COFFEE_SHOP_QUERY = gql`
     seeCoffeeShop(id: $id) {
       ...ShopDetailFragment
       comments(lastId: $lastId) {
+        id
         user {
           username
           avatarURL
@@ -173,22 +174,20 @@ const ShopDetail = () => {
     }
   );
 
-  const handleReviewOpen = () => {
-    setReviewOpen(true);
+  const handleOpen = (value: "like" | "review") => {
+    if (value === "like") {
+      setOpen(true);
+    } else if (value === "review") {
+      setReviewOpen(true);
+    }
     scrollVar(true);
   };
-
-  const handleReviewClose = () => {
-    setReviewOpen(false);
-    scrollVar(false);
-  };
-
-  const handleOpen = () => {
-    setOpen(true);
-    scrollVar(true);
-  };
-  const handleClose = () => {
-    setOpen(false);
+  const handleClose = (value: "like" | "review") => {
+    if (value === "like") {
+      setOpen(false);
+    } else if (value === "review") {
+      setReviewOpen(false);
+    }
     scrollVar(false);
   };
 
@@ -255,7 +254,7 @@ const ShopDetail = () => {
                                 }
                               );
                             }
-                          : handleReviewOpen
+                          : () => handleOpen("review")
                       }
                     >
                       <FontAwesomeIcon icon={faPencilAlt} />
@@ -263,19 +262,19 @@ const ShopDetail = () => {
                     </Icon>
                     {reviewOpen ? (
                       <LoginNotice
-                        handleClose={handleReviewClose}
+                        handleClose={() => handleClose("review")}
                         text={`이 카페의 리뷰를`}
                         text2={"작성할 수 있어요"}
                       />
                     ) : null}
                     <Likes
-                      handleOpen={handleOpen}
+                      handleOpen={() => handleOpen("like")}
                       id={data.seeCoffeeShop.id}
                       isLiked={data.seeCoffeeShop.isLiked}
                     />
                     {open ? (
                       <LoginNotice
-                        handleClose={handleClose}
+                        handleClose={() => handleClose("like")}
                         text={`가고 싶은 카페를`}
                         text2={"저장할 수 있어요"}
                       />

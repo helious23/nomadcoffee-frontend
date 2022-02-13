@@ -7,7 +7,7 @@ import { Button } from "../components/auth/Button";
 import { useRef, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLaugh, faMeh, faSmile } from "@fortawesome/free-regular-svg-icons";
-import { gql, useMutation, useApolloClient } from "@apollo/client";
+import { gql, useMutation, useApolloClient, Reference } from "@apollo/client";
 import {
   createComment,
   createCommentVariables,
@@ -18,10 +18,24 @@ import { useHistory } from "react-router";
 import { faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 import { ErrorOutput } from "../components/shared";
 import FormError from "../components/auth/FormError";
+import {
+  editComment,
+  editCommentVariables,
+} from "../__generated__/editComment";
 
 const CREATE_COMMENT = gql`
   mutation createComment($shopId: Int!, $payload: String!, $rating: Int!) {
     createComment(shopId: $shopId, payload: $payload, rating: $rating) {
+      ok
+      error
+      id
+    }
+  }
+`;
+
+const EDIT_COMMENT = gql`
+  mutation editComment($id: Int!, $payload: String!, $rating: Int!) {
+    editComment(id: $id, payload: $payload, rating: $rating) {
       ok
       error
       id
@@ -129,6 +143,10 @@ const TextCount = styled.div`
 
 interface ILocationProps {
   shopName: string;
+  edit: boolean;
+  payload: string;
+  rating: number;
+  commentId: number;
 }
 
 interface IFormProps {
@@ -148,6 +166,16 @@ const Comment = () => {
   const [open, setOpen] = useState(false);
   const history = useHistory();
 
+  const { handleSubmit, formState, register, getValues, setError, setValue } =
+    useForm<IFormProps>();
+
+  useEffect(() => {
+    if (state?.edit) {
+      setValue("payload", state?.payload);
+      setCurrentValue(state?.payload);
+    }
+  }, [setValue, state?.edit, state?.payload]);
+
   const handleOpen = () => {
     setOpen(true);
     scrollVar(true);
@@ -157,16 +185,11 @@ const Comment = () => {
     scrollVar(false);
   };
 
-  const { handleSubmit, formState, register, getValues, setError } =
-    useForm<IFormProps>();
-
   const [currentValue, setCurrentValue] = useState<string | undefined>(
     undefined
   );
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const { ref, ...rest } = register("payload", { required: true });
-
-  console.log(currentValue);
 
   const onRatingClick = (value: number) => {
     setRating(value);
@@ -182,6 +205,9 @@ const Comment = () => {
       payload: payload,
       isMine: true,
       rating,
+      shop: {
+        __ref: `CoffeeShop:${shopId}`,
+      },
       user: {
         __typename: "User",
         username: userData?.me?.username,
@@ -196,6 +222,7 @@ const Comment = () => {
           payload
           isMine
           rating
+          shop
           user {
             username
             avatarURL
@@ -216,7 +243,7 @@ const Comment = () => {
       id: `CoffeeShop:${shopId}`,
       fields: {
         comments(prev) {
-          return [newComment, ...prev];
+          return [newCacheComment, ...prev];
         },
         commentNumber(prev) {
           return prev + 1;
@@ -246,6 +273,86 @@ const Comment = () => {
     onCompleted,
   });
 
+  const updateEditCommentCache = (id: number) => {
+    const { cache } = client;
+    const payload = getValues("payload");
+    const editedComment = {
+      __typename: "Comment",
+      id,
+      createdAt: Date.now() + "",
+      payload: payload,
+      isMine: true,
+      rating,
+      shop: {
+        __ref: `CoffeeShop"${shopId}`,
+      },
+      user: {
+        __typename: "User",
+        username: userData?.me?.username,
+        avatarURL: userData?.me?.avatarURL,
+      },
+    };
+    const newEditedCommentCache = cache.writeFragment({
+      fragment: gql`
+        fragment CommentCache on Comment {
+          id
+          createdAt
+          payload
+          isMine
+          rating
+          user {
+            username
+            avatarURL
+          }
+        }
+      `,
+      data: editedComment,
+    });
+    cache.modify({
+      id: "ROOT_QUERY",
+      fields: {
+        seeCoffeeShopComments: (prev: Reference[]) => {
+          const remain = prev.filter(
+            (comment) => comment.__ref !== `Comment:${id}`
+          );
+          return [newEditedCommentCache, ...remain];
+        },
+      },
+    });
+    cache.modify({
+      id: `CoffeeShop:${shopId}`,
+      fields: {
+        seeCoffeeShopComments: (prev: Reference[]) => {
+          const remain = prev.filter(
+            (comment) => comment.__ref !== `Comment:${id}`
+          );
+          return [newEditedCommentCache, ...remain];
+        },
+      },
+    });
+  };
+
+  const onEditComplete = (data: editComment) => {
+    const {
+      editComment: { ok, error, id },
+    } = data;
+    if (error) {
+      return setError("result", {
+        message: error,
+      });
+    } else if (ok && id) {
+      updateEditCommentCache(id);
+      history.goBack();
+    }
+  };
+
+  const [editCommentMutation, { loading: editLoading }] = useMutation<
+    editComment,
+    editCommentVariables
+  >(EDIT_COMMENT, {
+    onCompleted: onEditComplete,
+  });
+
   const onValid: SubmitHandler<IFormProps> = () => {
     handleOpen();
   };
@@ -253,14 +360,24 @@ const Comment = () => {
   const mutationTrigger = () => {
     handleClose();
     const payload = getValues("payload");
-    if (loading) return;
-    createCommentMutation({
-      variables: {
-        payload,
-        rating,
-        shopId: +shopId,
-      },
-    });
+    if (loading || editLoading) return;
+    if (state?.edit) {
+      editCommentMutation({
+        variables: {
+          id: state?.commentId,
+          payload,
+          rating,
+        },
+      });
+    } else {
+      createCommentMutation({
+        variables: {
+          payload,
+          rating,
+          shopId: +shopId,
+        },
+      });
+    }
   };
 
   useEffect(() => {
@@ -335,16 +452,20 @@ const Comment = () => {
         </ErrorOutput>
         <Button
           canClick={!Boolean(currentValue)}
-          loading={loading}
-          actionText={"리뷰 올리기"}
+          loading={loading || editLoading}
+          actionText={state?.edit ? "리뷰 수정하기" : "리뷰 올리기"}
         />
       </Form>
       {open ? (
         <ConfirmNotice
           handleClose={handleClose}
           mutationTrigger={mutationTrigger}
-          title={"리뷰 작성"}
-          text={`리뷰를 작성 하시겠습니까?`}
+          title={state?.edit ? "리뷰 수정" : "리뷰 작성"}
+          text={
+            state?.edit
+              ? `리뷰를 수정 하시겠습니까?`
+              : `리뷰를 작성 하시겠습니까?`
+          }
           iconName={faPencilAlt}
         />
       ) : null}

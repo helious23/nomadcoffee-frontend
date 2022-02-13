@@ -33,6 +33,7 @@ export interface seeCoffeeShop_seeCoffeeShop_comments_user {
 
 export interface seeCoffeeShop_seeCoffeeShop_comments {
   __typename: "Comment";
+  id: number;
   user: seeCoffeeShop_seeCoffeeShop_comments_user;
   payload: string;
   rating: number;

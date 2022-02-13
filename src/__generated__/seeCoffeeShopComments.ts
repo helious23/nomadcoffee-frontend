@@ -13,6 +13,12 @@ export interface seeCoffeeShopComments_seeCoffeeShopComments_user {
   avatarURL: string | null;
 }
 
+export interface seeCoffeeShopComments_seeCoffeeShopComments_shop {
+  __typename: "CoffeeShop";
+  id: number;
+  name: string;
+}
+
 export interface seeCoffeeShopComments_seeCoffeeShopComments {
   __typename: "Comment";
   id: number;
@@ -21,6 +27,7 @@ export interface seeCoffeeShopComments_seeCoffeeShopComments {
   isMine: boolean;
   rating: number;
   user: seeCoffeeShopComments_seeCoffeeShopComments_user;
+  shop: seeCoffeeShopComments_seeCoffeeShopComments_shop;
 }
 
 export interface seeCoffeeShopComments {
