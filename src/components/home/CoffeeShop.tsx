@@ -209,7 +209,7 @@ const CoffeeShop: React.FC<seeCoffeeShops_seeCoffeeShops> = ({
           </HeaderDetail>
           <IconContainer>
             <Likes handleOpen={handleOpen} id={id} isLiked={isLiked} />
-            <UserLink to={`/profile/${user.username}`}>
+            <UserLink to={`/profile/${user.id}`}>
               <Avatar url={user.avatarURL} size={3} />
               <UserName>{user.username}</UserName>
             </UserLink>

@@ -7,10 +7,23 @@
 // GraphQL mutation operation: editCoffeeShop
 // ====================================================
 
+export interface editCoffeeShop_editCoffeeShop_shop {
+  __typename: "CoffeeShop";
+  id: number;
+}
+
+export interface editCoffeeShop_editCoffeeShop_photos {
+  __typename: "CoffeeShopPhoto";
+  id: number;
+  url: string;
+}
+
 export interface editCoffeeShop_editCoffeeShop {
   __typename: "EditCoffeeShopResult";
   ok: boolean;
   error: string | null;
+  shop: editCoffeeShop_editCoffeeShop_shop | null;
+  photos: (editCoffeeShop_editCoffeeShop_photos | null)[] | null;
 }
 
 export interface editCoffeeShop {

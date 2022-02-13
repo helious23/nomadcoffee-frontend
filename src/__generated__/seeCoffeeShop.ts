@@ -21,6 +21,7 @@ export interface seeCoffeeShop_seeCoffeeShop_categories {
 
 export interface seeCoffeeShop_seeCoffeeShop_user {
   __typename: "User";
+  id: number;
   username: string;
   avatarURL: string | null;
 }

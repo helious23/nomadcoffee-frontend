@@ -34,5 +34,11 @@ Making NomadCoffee Frontend with Create React App, Apollo Client, Graphql, Types
 - [x] Edit Profile
 - [x] Edit Comment
 - [x] Delete Comment
-- [ ] Delete CoffeeShop
-- [ ] Apollo cache modify
+- [x] Delete CoffeeShop
+- [x] Apollo cache modify
+
+### To Do
+- [ ] Search CoffeeShop by keyword,address, category or user(?)
+- [ ] See Categories
+- [ ] See CoffeeShop by category
+- [ ] See Wishlist

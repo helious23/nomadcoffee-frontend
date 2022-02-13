@@ -19,6 +19,7 @@ import { SButton } from "../components/auth/Button";
 import {
   createCoffeeShop,
   createCoffeeShopVariables,
+  createCoffeeShop_createCoffeeShop_photos,
 } from "../__generated__/createCoffeeShop";
 import { useHistory, useLocation } from "react-router-dom";
 import routes from "../routes";
@@ -34,6 +35,9 @@ import { AnimatePresence, motion } from "framer-motion";
 import { scrollVar } from "../apollo";
 import ConfirmNotice from "../components/ConfirmNotice";
 import { faEdit } from "@fortawesome/free-regular-svg-icons";
+import { useApolloClient } from "@apollo/client";
+import { useMe } from "../hooks/useMe";
+import { SEE_COFFEE_SHOP_QUERY } from "./ShopDetail";
 
 const DELETE_COFFEESHOP_PHOTO = gql`
   mutation deleteCoffeeShopPhoto($id: Int!) {
@@ -75,6 +79,13 @@ const EDIT_COFFEE_SHOP = gql`
     ) {
       ok
       error
+      shop {
+        id
+      }
+      photos {
+        id
+        url
+      }
     }
   }
 `;
@@ -100,6 +111,13 @@ const CREATE_COFFEE_SHOP = gql`
     ) {
       ok
       error
+      shop {
+        id
+      }
+      photos {
+        id
+        url
+      }
     }
   }
 `;
@@ -222,6 +240,7 @@ interface IFormProps {
   address: string;
   categories: string[];
   photos: FileList;
+  result?: string;
 }
 interface ILatLng {
   latitude: string;
@@ -252,6 +271,8 @@ interface ILocationState {
 }
 
 const CreateCafe = () => {
+  const kakao = window.kakao;
+  const client = useApolloClient();
   const [addressOpen, setAddressOpen] = useState(false);
   const [addressData, setAddressData] = useState("");
 
@@ -262,6 +283,7 @@ const CreateCafe = () => {
   const { state } = useLocation<ILocationState>();
 
   const [open, setOpen] = useState(false);
+  const { data: userData } = useMe();
 
   const handleOpen = () => {
     setOpen(true);
@@ -271,6 +293,21 @@ const CreateCafe = () => {
     setOpen(false);
     scrollVar(false);
   };
+
+  useEffect(() => {
+    if (kakao && addressData) {
+      kakao.maps.load(() => {
+        const geocoder = new kakao.maps.services.Geocoder();
+        const callback = (result: any, status: any) => {
+          if (status === kakao.maps.services.Status.OK) {
+            setLatLng({ latitude: result[0].y, longitude: result[0].x });
+          }
+        };
+        //@ts-ignore
+        geocoder.addressSearch(addressData, callback);
+      });
+    }
+  }, [kakao, addressData]);
 
   useEffect(() => {
     if (fileList && fileList.length > 0) {
@@ -311,7 +348,7 @@ const CreateCafe = () => {
     state?.address,
   ]);
 
-  const { handleSubmit, register, formState, getValues, setValue } =
+  const { handleSubmit, register, formState, getValues, setValue, setError } =
     useForm<IFormProps>({
       defaultValues: {
         name: state?.name || "",
@@ -341,7 +378,6 @@ const CreateCafe = () => {
           deleteCoffeeShopPhoto: { ok, id: photoId },
         },
       } = result;
-      console.log(result);
       if (ok) {
         cache.evict({
           id: `CoffeeShopPhoto:${photoId}`,
@@ -362,13 +398,164 @@ const CreateCafe = () => {
     }
   };
 
-  const onCompleted = () => {
-    if (state?.edit) {
-      alert("카페가 수정되었습니다");
+  const updateCreateCoffeeCache = (
+    shopId: number,
+    photos: (createCoffeeShop_createCoffeeShop_photos | null)[]
+  ) => {
+    const { cache } = client;
+    const { name, categories, latitude, longitude, description } = getValues();
+    if (userData?.me) {
+      const newCoffeeShop = {
+        __typename: "CoffeeShop",
+        id: shopId,
+        name,
+        latitude,
+        longitude,
+        slug: name.trim().toLowerCase().replace(/ +/g, "-"),
+        photos: photos.map((photo) => {
+          return {
+            __ref: `CoffeeShopPhoto:${photo?.id}`,
+            id: photo?.id,
+            url: photo?.url,
+          };
+        }),
+        likes: 0,
+        commentNumber: 0,
+        isLiked: false,
+        isMine: true,
+        address: addressData,
+        description,
+        categories: categories.map((category) => {
+          return {
+            __typename: "Category",
+            name: category,
+            slug: category.trim().toLowerCase().replace(/ +/g, "-"),
+          };
+        }),
+        user: {
+          __typename: "User",
+          username: userData.me.username,
+          avatarURL: userData.me.avatarURL,
+        },
+        averageRating: 0,
+      };
+
+      const newCoffeeShopCache = cache.writeFragment({
+        fragment: gql`
+          fragment CoffeeShopCache on CoffeeShop {
+            id
+            name
+            latitude
+            longitude
+            slug
+            photos {
+              id
+              url
+            }
+            likes
+            commentNumber
+            isLiked
+            isMine
+            address
+            description
+            categories {
+              name
+              slug
+            }
+            user {
+              username
+              avatarURL
+            }
+            averageRating
+          }
+        `,
+        data: newCoffeeShop,
+      });
+      cache.modify({
+        id: "ROOT_QUERY",
+        fields: {
+          seeCoffeeShops(prev) {
+            return [newCoffeeShopCache, ...prev];
+          },
+        },
+      });
+    }
+  };
+
+  const updateEditCoffeeShopCache = (
+    shopId: number,
+    photos: (createCoffeeShop_createCoffeeShop_photos | null)[]
+  ) => {
+    const { name, categories, latitude, longitude, description } = getValues();
+
+    if (userData?.me) {
+      const queryResult = client.readQuery({
+        query: SEE_COFFEE_SHOP_QUERY,
+        variables: {
+          id: shopId,
+        },
+      });
+
+      if (queryResult) {
+        client.writeQuery({
+          query: SEE_COFFEE_SHOP_QUERY,
+          variables: {
+            id: shopId,
+          },
+          data: {
+            seeCoffeeShop: {
+              ...queryResult.seeCoffeeShop,
+              address: addressData,
+              description,
+              latitude,
+              longitude,
+              categories: categories.map((category) => {
+                return {
+                  __typename: "Category",
+                  name: category,
+                  slug: category.trim().toLowerCase().replace(/ +/g, "-"),
+                };
+              }),
+              name,
+              slug: name.trim().toLowerCase().replace(/ +/g, "-"),
+              photos: photos.map((photo) => {
+                return {
+                  __ref: `CoffeeShopPhoto:${photo?.id}`,
+                  id: photo?.id,
+                  url: photo?.url,
+                };
+              }),
+            },
+          },
+        });
+      }
+    }
+  };
+
+  const onCompleted = (data: createCoffeeShop) => {
+    const {
+      createCoffeeShop: { ok, error, shop, photos },
+    } = data;
+    if (error) {
+      console.log(error);
+      return setError("result", {
+        message: error,
+      });
+    } else if (ok && shop && photos) {
+      updateCreateCoffeeCache(shop.id, photos);
       history.push(routes.home);
-    } else {
-      alert("카페가 등록되었습니다");
-      history.push(routes.home);
+    }
+  };
+
+  const onEditCompleted = (data: editCoffeeShop) => {
+    const {
+      editCoffeeShop: { ok, error, shop, photos },
+    } = data;
+    if (error) {
+      console.log(error);
+    } else if (ok && shop && photos) {
+      updateEditCoffeeShopCache(shop.id, photos);
+      history.goBack();
     }
   };
 
@@ -383,7 +570,7 @@ const CreateCafe = () => {
     editCoffeeShop,
     editCoffeeShopVariables
   >(EDIT_COFFEE_SHOP, {
-    onCompleted,
+    onCompleted: onEditCompleted,
   });
 
   const [deleteCoffeeshopPhotoMutation, { loading: deletePhotoLoading }] =
@@ -526,6 +713,9 @@ const CreateCafe = () => {
             <AddressBtnContainer>
               <AddressBtn onClick={onAddressClick}>주소 입력</AddressBtn>
             </AddressBtnContainer>
+            {/* {addressData !== "" && (
+              <AddressToLatLng address={addressData} setLatLng={setLatLng} />
+            )} */}
             {latLng && (
               <>
                 <InvisibleInput
@@ -595,10 +785,22 @@ const CreateCafe = () => {
                           style={{ backgroundImage: `url(${image.localUrl})` }}
                         />
                       );
-                    } else {
+                    }
+                    if (!image.id) {
                       return (
                         <PhotoFile
                           key={`Photo:${index}`}
+                          initial={{ opacity: 0, scale: 0 }}
+                          animate={{
+                            opacity: 1,
+                            scale: 1,
+                            transition: { duration: 1 },
+                          }}
+                          exit={{
+                            opacity: 0,
+                            scale: 0,
+                            transition: { duration: 1 },
+                          }}
                           style={{ backgroundImage: `url(${image.localUrl})` }}
                         />
                       );

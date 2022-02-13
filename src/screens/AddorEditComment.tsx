@@ -22,6 +22,7 @@ import {
   editComment,
   editCommentVariables,
 } from "../__generated__/editComment";
+import routes from "../routes";
 
 const CREATE_COMMENT = gql`
   mutation createComment($shopId: Int!, $payload: String!, $rating: Int!) {
@@ -157,7 +158,7 @@ interface IParamsProps {
   shopId: string;
 }
 
-const Comment = () => {
+const AddOrEditComment = () => {
   const client = useApolloClient();
   const { state } = useLocation<ILocationProps>();
   const { shopId } = useParams<IParamsProps>();
@@ -397,65 +398,71 @@ const Comment = () => {
 
   return (
     <Container>
-      <PageTitle title={`${state?.shopName} 리뷰 쓰기`} />
-      <Form onSubmit={handleSubmit(onValid)}>
-        <Title htmlFor="payload">
-          <ShopName>{state?.shopName}</ShopName>
-          <Subtitle>에 대한 솔직한 리뷰를 써주세요.</Subtitle>
-        </Title>
-        <TextArea
-          maxLength={1000}
-          id="payload"
-          {...rest}
-          name="payload"
-          ref={(e) => {
-            ref(e);
-            textareaRef.current = e;
-          }}
-          onChange={onHeightChange}
-          hasError={Boolean(formState.errors.payload)}
-        />
-        <RatingContainer>
-          <FaceContainer>
-            <Rating
-              onClick={() => onRatingClick(5)}
-              clicked={Boolean(rating === 5)}
-            >
-              <FontAwesomeIcon icon={faLaugh} />
-              <div>맛있다</div>
-            </Rating>
-            <Rating
-              onClick={() => onRatingClick(4)}
-              clicked={Boolean(rating === 4)}
-            >
-              <FontAwesomeIcon icon={faSmile} />
-              <div>괜찮다</div>
-            </Rating>
-            <Rating
-              onClick={() => onRatingClick(3)}
-              clicked={Boolean(rating === 3)}
-            >
-              <FontAwesomeIcon icon={faMeh} />
-              <div>별로에요</div>
-            </Rating>
-          </FaceContainer>
-        </RatingContainer>
-        <TextPlaceholder invisible={Boolean(currentValue)}>
-          {userData?.me?.username} 님, 방문하신 카페는 어떠셨나요? 카페의
-          분위기와 메뉴도 궁금해요!
-        </TextPlaceholder>
-        <CountCountainer>
-          <TextCount> {currentValue?.length || "0"} / 1000</TextCount>
-        </CountCountainer>
-        <ErrorOutput>
-          <FormError message={formState?.errors?.result?.message} />
-        </ErrorOutput>
-        <Button
-          canClick={!Boolean(currentValue)}
-          loading={loading || editLoading}
-          actionText={state?.edit ? "리뷰 수정하기" : "리뷰 올리기"}
-        />
-      </Form>
+      {state?.shopName ? (
+        <>
+          <PageTitle title={`${state?.shopName} 리뷰 쓰기`} />
+          <Form onSubmit={handleSubmit(onValid)}>
+            <Title htmlFor="payload">
+              <ShopName>{state?.shopName}</ShopName>
+              <Subtitle>에 대한 솔직한 리뷰를 써주세요.</Subtitle>
+            </Title>
+            <TextArea
+              maxLength={1000}
+              id="payload"
+              {...rest}
+              name="payload"
+              ref={(e) => {
+                ref(e);
+                textareaRef.current = e;
+              }}
+              onChange={onHeightChange}
+              hasError={Boolean(formState.errors.payload)}
+            />
+            <RatingContainer>
+              <FaceContainer>
+                <Rating
+                  onClick={() => onRatingClick(5)}
+                  clicked={Boolean(rating === 5)}
+                >
+                  <FontAwesomeIcon icon={faLaugh} />
+                  <div>맛있다</div>
+                </Rating>
+                <Rating
+                  onClick={() => onRatingClick(4)}
+                  clicked={Boolean(rating === 4)}
+                >
+                  <FontAwesomeIcon icon={faSmile} />
+                  <div>괜찮다</div>
+                </Rating>
+                <Rating
+                  onClick={() => onRatingClick(3)}
+                  clicked={Boolean(rating === 3)}
+                >
+                  <FontAwesomeIcon icon={faMeh} />
+                  <div>별로에요</div>
+                </Rating>
+              </FaceContainer>
+            </RatingContainer>
+            <TextPlaceholder invisible={Boolean(currentValue)}>
+              {userData?.me?.username} 님, 방문하신 카페는 어떠셨나요? 카페의
+              분위기와 메뉴도 궁금해요!
+            </TextPlaceholder>
+            <CountCountainer>
+              <TextCount> {currentValue?.length || "0"} / 1000</TextCount>
+            </CountCountainer>
+            <ErrorOutput>
+              <FormError message={formState?.errors?.result?.message} />
+            </ErrorOutput>
+            <Button
+              canClick={!Boolean(currentValue)}
+              loading={loading || editLoading}
+              actionText={state?.edit ? "리뷰 수정하기" : "리뷰 올리기"}
+            />
+          </Form>{" "}
+        </>
+      ) : (
+        <>{history.push(routes.home)}</>
+      )}
       {open ? (
         <ConfirmNotice
           handleClose={handleClose}
@@ -473,4 +480,4 @@ const Comment = () => {
   );
 };
 
-export default Comment;
+export default AddOrEditComment;

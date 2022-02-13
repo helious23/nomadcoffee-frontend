@@ -3,7 +3,13 @@ import defaultImage from "../asset/default_cafe_img.jpeg";
 import styled from "styled-components";
 import PageTitle from "../components/PageTitle";
 import { useParams } from "react-router-dom";
-import { gql, useQuery } from "@apollo/client";
+import {
+  gql,
+  useQuery,
+  useMutation,
+  useApolloClient,
+  Reference,
+} from "@apollo/client";
 import { SHOP_DETAIL_FRAGMENT } from "../fragments";
 import {
   seeCoffeeShop,
@@ -14,7 +20,11 @@ import Likes from "../components/Likes";
 import { useState } from "react";
 import { isLoggedInVar, scrollVar } from "../apollo";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPencilAlt, faPlus } from "@fortawesome/free-solid-svg-icons";
+import {
+  faMinus,
+  faPencilAlt,
+  faPlus,
+} from "@fortawesome/free-solid-svg-icons";
 import { faStar as SolidStar } from "@fortawesome/free-solid-svg-icons";
 import LoginNotice from "../components/LoginNotice";
 import { Category } from "../components/shared";
@@ -22,8 +32,23 @@ import routes from "../routes";
 import { useHistory } from "react-router";
 import { AnimatePresence, motion } from "framer-motion";
 import Comments from "../components/home/Comments";
+import ConfirmNotice from "../components/ConfirmNotice";
+import { faTrashAlt } from "@fortawesome/free-regular-svg-icons";
+import {
+  deleteCoffeeShop,
+  deleteCoffeeShopVariables,
+} from "../__generated__/deleteCoffeeShop";
 
-const SEE_COFFEE_SHOP_QUERY = gql`
+const DELETE_COFFEE_SHOP = gql`
+  mutation deleteCoffeeShop($id: Int!) {
+    deleteCoffeeShop(id: $id) {
+      ok
+      error
+    }
+  }
+`;
+
+export const SEE_COFFEE_SHOP_QUERY = gql`
   query seeCoffeeShop($id: Int!, $lastId: Int) {
     seeCoffeeShop(id: $id) {
       ...ShopDetailFragment
@@ -159,9 +184,11 @@ interface IParamProps {
 }
 
 const ShopDetail = () => {
+  const client = useApolloClient();
   const { shopId } = useParams<IParamProps>();
   const [open, setOpen] = useState(false);
   const [reviewOpen, setReviewOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
   const history = useHistory();
   const isLoggedIn = isLoggedInVar();
 
@@ -174,24 +201,79 @@ const ShopDetail = () => {
     }
   );
 
-  const handleOpen = (value: "like" | "review") => {
-    if (value === "like") {
-      setOpen(true);
-    } else if (value === "review") {
-      setReviewOpen(true);
+  const updateDeleteCache = () => {
+    const { cache } = client;
+    cache.evict({ id: `CoffeeShop:${shopId}` });
+    cache.modify({
+      id: "ROOT_QUERY",
+      fields: {
+        seeCoffeeShops: (prev: Reference[]) =>
+          prev.filter(
+            (coffeeShop) => coffeeShop.__ref !== `CoffeeShop:${shopId}`
+          ),
+      },
+    });
+  };
+
+  const onCompleted = (data: deleteCoffeeShop) => {
+    const {
+      deleteCoffeeShop: { ok, error },
+    } = data;
+    if (error) {
+      console.log(error);
+    } else if (ok) {
+      updateDeleteCache();
+      history.push(routes.home);
+    }
+  };
+
+  const [deleteCoffeeShopMutation, { loading: deleteLoading }] = useMutation<
+    deleteCoffeeShop,
+    deleteCoffeeShopVariables
+  >(DELETE_COFFEE_SHOP, {
+    onCompleted,
+  });
+
+  const mutationTrigger = () => {
+    handleClose("delete");
+    deleteCoffeeShopMutation({
+      variables: {
+        id: +shopId,
+      },
+    });
+  };
+
+  const handleOpen = (value: "like" | "review" | "delete") => {
+    switch (value) {
+      case "like":
+        setOpen(true);
+        break;
+      case "review":
+        setReviewOpen(true);
+        break;
+      case "delete":
+        setDeleteOpen(true);
+        break;
     }
     scrollVar(true);
   };
-  const handleClose = (value: "like" | "review") => {
-    if (value === "like") {
-      setOpen(false);
-    } else if (value === "review") {
-      setReviewOpen(false);
+
+  const handleClose = (value: "like" | "review" | "delete") => {
+    switch (value) {
+      case "like":
+        setOpen(false);
+        break;
+      case "review":
+        setReviewOpen(false);
+        break;
+      case "delete":
+        setDeleteOpen(false);
+        break;
     }
     scrollVar(false);
   };
 
-  return loading ? (
+  return loading || deleteLoading ? (
     <Loading size={6} screen={true} />
   ) : (
     <Container>
@@ -224,24 +306,39 @@ const ShopDetail = () => {
                   </TitleContainer>
                   <IconContainer>
                     {data.seeCoffeeShop.isMine ? (
-                      <Icon
-                        onClick={() =>
-                          history.push(routes.createCafe, {
-                            shopId: data.seeCoffeeShop?.id,
-                            name: data.seeCoffeeShop?.name,
-                            latitude: data.seeCoffeeShop?.latitude,
-                            longitude: data.seeCoffeeShop?.longitude,
-                            address: data.seeCoffeeShop?.address,
-                            photos: data.seeCoffeeShop?.photos,
-                            categories: data.seeCoffeeShop?.categories,
-                            description: data.seeCoffeeShop?.description,
-                            edit: true,
-                          })
-                        }
-                      >
-                        <FontAwesomeIcon icon={faPlus} />
-                        <Write>정보 수정</Write>
-                      </Icon>
+                      <>
+                        <Icon onClick={() => handleOpen("delete")}>
+                          <FontAwesomeIcon icon={faMinus} />
+                          <Write>카페 삭제</Write>
+                        </Icon>
+                        {deleteOpen ? (
+                          <ConfirmNotice
+                            handleClose={() => handleClose("delete")}
+                            text={"정말 카페를 삭제하시겠습니까?"}
+                            title={"카페 삭제"}
+                            iconName={faTrashAlt}
+                            mutationTrigger={mutationTrigger}
+                          />
+                        ) : null}
+                        <Icon
+                          onClick={() =>
+                            history.push(routes.createCafe, {
+                              shopId: data.seeCoffeeShop?.id,
+                              name: data.seeCoffeeShop?.name,
+                              latitude: data.seeCoffeeShop?.latitude,
+                              longitude: data.seeCoffeeShop?.longitude,
+                              address: data.seeCoffeeShop?.address,
+                              photos: data.seeCoffeeShop?.photos,
+                              categories: data.seeCoffeeShop?.categories,
+                              description: data.seeCoffeeShop?.description,
+                              edit: true,
+                            })
+                          }
+                        >
+                          <FontAwesomeIcon icon={faPlus} />
+                          <Write>정보 수정</Write>
+                        </Icon>
+                      </>
                     ) : null}
                     <Icon
                       onClick={

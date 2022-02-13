@@ -21,6 +21,7 @@ export interface ShopDetailFragment_categories {
 
 export interface ShopDetailFragment_user {
   __typename: "User";
+  id: number;
   username: string;
   avatarURL: string | null;
 }

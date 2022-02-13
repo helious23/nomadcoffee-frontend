@@ -41,6 +41,7 @@ export const SHOP_DETAIL_FRAGMENT = gql`
       slug
     }
     user {
+      id
       username
       avatarURL
     }
