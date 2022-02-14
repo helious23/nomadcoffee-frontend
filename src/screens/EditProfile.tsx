@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import Avatar from "../components/Avatar";
 import PageTitle from "../components/PageTitle";
-import { ME_QUERY, useMe } from "../hooks/useMe";
+import { useMe } from "../hooks/useMe";
 import { useForm } from "react-hook-form";
 import { useState, useEffect } from "react";
 import { scrollVar } from "../apollo";
@@ -19,7 +19,6 @@ import {
 import FormError from "../components/auth/FormError";
 import Loading from "../components/Loading";
 import { useHistory } from "react-router";
-import routes from "../routes";
 
 const EDIT_PROFILE = gql`
   mutation editProfile(
@@ -348,13 +347,13 @@ const EditProfile = () => {
         setValue("githubUsername", userData.me.githubUsername);
       }
     }
-  }, [userData]);
+  }, [userData, setValue]);
 
   useEffect(() => {
     if (addressData) {
       setValue("location", addressData);
     }
-  }, [addressData]);
+  }, [addressData, setValue]);
 
   const clearEditProfileError = () => {
     if (formState.errors.result) {

@@ -23,6 +23,7 @@ import {
   editCommentVariables,
 } from "../__generated__/editComment";
 import routes from "../routes";
+import { SEE_COFFEE_SHOP_QUERY } from "./ShopDetail";
 
 const CREATE_COMMENT = gql`
   mutation createComment($shopId: Int!, $payload: String!, $rating: Int!) {
@@ -199,6 +200,32 @@ const CreateOrEditComment = () => {
   const updateCommentCache = (id: number) => {
     const { cache } = client;
     const payload = getValues("payload");
+    const queryResult = client.readQuery({
+      query: SEE_COFFEE_SHOP_QUERY,
+      variables: {
+        id: +shopId,
+      },
+    });
+
+    if (queryResult) {
+      client.writeQuery({
+        query: SEE_COFFEE_SHOP_QUERY,
+        variables: {
+          id: +shopId,
+        },
+        data: {
+          seeCoffeeShop: {
+            ...queryResult.seeCoffeeShop,
+            averageRating: (
+              (queryResult.seeCoffeeShop.averageRating *
+                queryResult.seeCoffeeShop.commentNumber +
+                rating) /
+              (queryResult.seeCoffeeShop.commentNumber + 1)
+            ).toFixed(2),
+          },
+        },
+      });
+    }
     const newComment = {
       __typename: "Comment",
       id,

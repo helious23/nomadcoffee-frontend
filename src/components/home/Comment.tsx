@@ -20,6 +20,7 @@ import {
   deleteCommentVariables,
 } from "../../__generated__/deleteComment";
 import Loading from "../Loading";
+import { SEE_COFFEE_SHOP_QUERY } from "../../screens/ShopDetail";
 
 const DELETE_COMMENT = gql`
   mutation deleteComment($id: Int!) {
@@ -151,6 +152,41 @@ const Comment: React.FC<seeCoffeeShopComments_seeCoffeeShopComments> = ({
 
   const deleteCommentCacheUpdate = () => {
     const { cache } = client;
+    const queryResult = client.readQuery({
+      query: SEE_COFFEE_SHOP_QUERY,
+      variables: {
+        id: shop.id,
+      },
+    });
+
+    if (queryResult) {
+      client.writeQuery({
+        query: SEE_COFFEE_SHOP_QUERY,
+        variables: {
+          id: shop.id,
+        },
+        data: {
+          seeCoffeeShop: {
+            ...queryResult.seeCoffeeShop,
+            averageRating: isNaN(
+              +(
+                (queryResult.seeCoffeeShop.averageRating *
+                  queryResult.seeCoffeeShop.commentNumber -
+                  rating) /
+                (queryResult.seeCoffeeShop.commentNumber - 1)
+              ).toFixed(2)
+            )
+              ? 0
+              : (
+                  (queryResult.seeCoffeeShop.averageRating *
+                    queryResult.seeCoffeeShop.commentNumber -
+                    rating) /
+                  (queryResult.seeCoffeeShop.commentNumber - 1)
+                ).toFixed(2),
+          },
+        },
+      });
+    }
     cache.evict({ id: `Comment:${id}` });
     cache.modify({
       id: `CoffeeShop:${shop.id}`,

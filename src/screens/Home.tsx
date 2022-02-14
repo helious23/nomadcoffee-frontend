@@ -9,6 +9,8 @@ import {
   seeCoffeeShopsVariables,
 } from "../__generated__/seeCoffeeShops";
 import { SHOP_DETAIL_FRAGMENT } from "../fragments";
+import { useEffect, useRef } from "react";
+import { useIntersectionObserver } from "../hooks/useIntersectionObserver";
 
 export const SEE_COFFEE_SHOPS_QUERY = gql`
   query seeCoffeeShops($lastId: Int) {
@@ -32,8 +34,16 @@ const Home = () => {
     seeCoffeeShopsVariables
   >(SEE_COFFEE_SHOPS_QUERY);
 
-  const dataLength = data?.seeCoffeeShops?.length ?? 0;
+  const ref = useRef<HTMLDivElement>(null);
+  // const isBottomIntersection = useIntersectionObserver(
+  //   ref,
+  //   { threshold: 1 },
+  //   false
+  // );
 
+  // console.log(isBottomIntersection);
+
+  const dataLength = data?.seeCoffeeShops?.length ?? 0;
   const moreFetch = async (lastId: number) => {
     await fetchMore({
       variables: {
@@ -41,6 +51,14 @@ const Home = () => {
       },
     });
   };
+
+  // useEffect(() => {
+  //   if (isBottomIntersection && data) {
+  //     if (dataLength > 0 && data.seeCoffeeShops) {
+  //       moreFetch(data.seeCoffeeShops[dataLength - 1]?.id!);
+  //     }
+  //   }
+  // }, [isBottomIntersection, data, fetchMore]);
 
   return loading ? (
     <Loading size={6} screen={false} />
@@ -61,6 +79,7 @@ const Home = () => {
           shop ? <CoffeeShop key={shop.id} {...shop} /> : null
         )}
       </InfiniteScroll>
+      {/* <div ref={ref} style={{ width: "100%", height: "20px" }} /> */}
     </Container>
   );
 };

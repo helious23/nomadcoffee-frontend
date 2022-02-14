@@ -23,7 +23,7 @@ const AddressInput: React.FC<IAddressInputProps> = ({
 
   useEffect(() => {
     daumPostcode();
-  }, [daum]);
+  }, [daumPostcode]);
 
   return <></>;
 };
