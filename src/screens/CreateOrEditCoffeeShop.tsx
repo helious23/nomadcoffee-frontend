@@ -518,13 +518,16 @@ const CreateCafe = () => {
               }),
               name,
               slug: name.trim().toLowerCase().replace(/ +/g, "-"),
-              photos: photos.map((photo) => {
-                return {
-                  __ref: `CoffeeShopPhoto:${photo?.id}`,
-                  id: photo?.id,
-                  url: photo?.url,
-                };
-              }),
+              photos:
+                photos.length > 0
+                  ? photos.map((photo) => {
+                      return {
+                        __ref: `CoffeeShopPhoto:${photo?.id}`,
+                        id: photo?.id,
+                        url: photo?.url,
+                      };
+                    })
+                  : [...queryResult.seeCoffeeShop.photos],
             },
           },
         });
@@ -786,25 +789,23 @@ const CreateCafe = () => {
                         />
                       );
                     }
-                    if (!image.id) {
-                      return (
-                        <PhotoFile
-                          key={`Photo:${index}`}
-                          initial={{ opacity: 0, scale: 0 }}
-                          animate={{
-                            opacity: 1,
-                            scale: 1,
-                            transition: { duration: 1 },
-                          }}
-                          exit={{
-                            opacity: 0,
-                            scale: 0,
-                            transition: { duration: 1 },
-                          }}
-                          style={{ backgroundImage: `url(${image.localUrl})` }}
-                        />
-                      );
-                    }
+                    return (
+                      <PhotoFile
+                        key={`Photo:${index}`}
+                        initial={{ opacity: 0, scale: 0 }}
+                        animate={{
+                          opacity: 1,
+                          scale: 1,
+                          transition: { duration: 1 },
+                        }}
+                        exit={{
+                          opacity: 0,
+                          scale: 0,
+                          transition: { duration: 1 },
+                        }}
+                        style={{ backgroundImage: `url(${image.localUrl})` }}
+                      />
+                    );
                   })}
               </AnimatePresence>
             </PhotoContainer>

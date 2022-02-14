@@ -6,8 +6,8 @@ import Layout from "../components/Layout";
 import MainImage from "../screens/MainImage";
 import Profile from "../screens/Profile";
 import ShopDetail from "../screens/ShopDetail";
-import CreateCafe from "../screens/CreateCafe";
-import AddOrEditComment from "../screens/AddorEditComment";
+import CreateOrEditCoffeeShop from "../screens/CreateOrEditCoffeeShop";
+import CreateOrEditComment from "../screens/CreateOrEditComment";
 import EditProfile from "../screens/EditProfile";
 
 const LoggedInRouter = () => {
@@ -37,12 +37,12 @@ const LoggedInRouter = () => {
         </Route>
         <Route path={routes.createCafe} exact>
           <Layout screen="other">
-            <CreateCafe />
+            <CreateOrEditCoffeeShop />
           </Layout>
         </Route>
         <Route path={routes.comment} exact>
           <Layout screen="comment">
-            <AddOrEditComment />
+            <CreateOrEditComment />
           </Layout>
         </Route>
         <Route>

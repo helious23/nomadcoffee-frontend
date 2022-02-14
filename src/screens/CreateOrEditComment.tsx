@@ -158,7 +158,7 @@ interface IParamsProps {
   shopId: string;
 }
 
-const AddOrEditComment = () => {
+const CreateOrEditComment = () => {
   const client = useApolloClient();
   const { state } = useLocation<ILocationProps>();
   const { shopId } = useParams<IParamsProps>();
@@ -480,4 +480,4 @@ const AddOrEditComment = () => {
   );
 };
 
-export default AddOrEditComment;
+export default CreateOrEditComment;
