@@ -39,9 +39,9 @@ Making NomadCoffee Frontend with Create React App, Apollo Client, Graphql, Types
 
 ### To Do
 - [x] AverageRating cache bug fix (create, edit, delete comment)
+- [x] See Categories
+- [x] See CoffeeShop by category
+- [x] See Wishlist
 - [ ] Search CoffeeShop by keyword,address, category or user(?)
-- [ ] See Categories
-- [ ] See CoffeeShop by category
-- [ ] See Wishlist
 - [ ] Infinite Scrolling Error Fix
 - [ ] Infinite Scrolling on Profile Component

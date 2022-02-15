@@ -5,6 +5,7 @@ import {
   DefaultContext,
   gql,
   MutationUpdaterFunction,
+  Reference,
   useMutation,
 } from "@apollo/client";
 import { toggleLike, toggleLikeVariables } from "../__generated__/toggleLike";
@@ -12,6 +13,7 @@ import Loading from "./Loading";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-regular-svg-icons";
 import { faStar as SolidStar } from "@fortawesome/free-solid-svg-icons";
+import { useMe } from "../hooks/useMe";
 
 const TOGGLE_LIKE_MUTATION = gql`
   mutation toggleLike($id: Int!) {
@@ -59,7 +61,7 @@ interface ILikesProps {
 
 const Likes: React.FC<ILikesProps> = ({ id, handleOpen, isLiked }) => {
   const isLoggedIn = isLoggedInVar();
-
+  const { data: userData } = useMe();
   const updateToggleLike: MutationUpdaterFunction<
     toggleLike,
     toggleLikeVariables,
@@ -73,8 +75,9 @@ const Likes: React.FC<ILikesProps> = ({ id, handleOpen, isLiked }) => {
         },
       } = result;
       if (ok) {
+        const cacheShopId = `CoffeeShop:${id}`;
         cache.modify({
-          id: `CoffeeShop:${id}`,
+          id: cacheShopId,
           fields: {
             isLiked(prev) {
               return !prev;
@@ -88,6 +91,20 @@ const Likes: React.FC<ILikesProps> = ({ id, handleOpen, isLiked }) => {
             },
           },
         });
+        if (userData?.me) {
+          cache.modify({
+            id: `User:${userData.me.id}`,
+            fields: {
+              likedShops: (prev: Reference[]) => {
+                if (prev.some((shop) => shop.__ref === cacheShopId)) {
+                  return prev.filter((shop) => shop.__ref !== cacheShopId);
+                } else {
+                  return [{ __ref: cacheShopId }, ...prev];
+                }
+              },
+            },
+          });
+        }
       }
     }
   };

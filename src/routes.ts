@@ -5,11 +5,11 @@ const routes = {
   profile: "/profile/:userId",
   editProfile: "/edit-profile/:userId",
   shopDetail: "/shop/:shopId",
-  likes: "/likes/:username",
+  likes: "/likes/:userId",
   createCafe: "/add",
   search: "/search",
   comment: "/comment/:shopId",
-  category:"/category/:categorySlug"
+  category: "/category/:categorySlug",
 };
 
 export default routes;

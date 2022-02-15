@@ -10,6 +10,7 @@ import CreateOrEditCoffeeShop from "../screens/CreateOrEditCoffeeShop";
 import CreateOrEditComment from "../screens/CreateOrEditComment";
 import EditProfile from "../screens/EditProfile";
 import Category from "../screens/Category";
+import LikedCoffeeShops from "../screens/LikedCoffeeShops";
 
 const LoggedInRouter = () => {
   return (
@@ -49,6 +50,11 @@ const LoggedInRouter = () => {
         <Route path={routes.category} exact>
           <Layout screen="other">
             <Category />
+          </Layout>
+        </Route>
+        <Route path={routes.likes} exact>
+          <Layout screen="other">
+            <LikedCoffeeShops />
           </Layout>
         </Route>
         <Route>

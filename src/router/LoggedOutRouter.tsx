@@ -8,6 +8,7 @@ import NotFound from "../screens/NotFound";
 import Login from "../screens/Login";
 import Profile from "../screens/Profile";
 import ShopDetail from "../screens/ShopDetail";
+import Category from "../screens/Category";
 
 const LoggedOutRouter = () => {
   return (
@@ -35,6 +36,11 @@ const LoggedOutRouter = () => {
         <Route path={routes.shopDetail}>
           <Layout screen="shopDetail">
             <ShopDetail />
+          </Layout>
+        </Route>
+        <Route path={routes.category} exact>
+          <Layout screen="other">
+            <Category />
           </Layout>
         </Route>
         <Route>

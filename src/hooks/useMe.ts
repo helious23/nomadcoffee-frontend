@@ -1,6 +1,7 @@
 import { useReactiveVar, gql, useQuery } from "@apollo/client";
 import { useEffect } from "react";
 import { isLoggedInVar, logUserOut } from "../apollo";
+import { SHOP_DETAIL_FRAGMENT } from "../fragments";
 import { me } from "../__generated__/me";
 
 export const ME_QUERY = gql`
@@ -13,8 +14,12 @@ export const ME_QUERY = gql`
       email
       location
       githubUsername
+      likedShops {
+        ...ShopDetailFragment
+      }
     }
   }
+  ${SHOP_DETAIL_FRAGMENT}
 `;
 
 export const useMe = () => {

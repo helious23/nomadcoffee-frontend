@@ -7,8 +7,8 @@ const LoggedOutHeader = () => {
   return (
     <IconsContainer>
       <Icon>
-        <Link to={routes.login}>
-          <HeaderText>추천 리스트</HeaderText>
+        <Link to={`/category/케익`}>
+          <HeaderText>카테고리</HeaderText>
         </Link>
       </Icon>
       <Icon>

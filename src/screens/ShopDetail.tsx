@@ -401,7 +401,12 @@ const ShopDetail = () => {
                 <Detail>
                   <Label>카테고리</Label>
                   {data.seeCoffeeShop.categories.map((category) => (
-                    <Category key={category.slug}># {category.name}</Category>
+                    <Category
+                      onClick={() => history.push(`/category/${category.slug}`)}
+                      key={category.slug}
+                    >
+                      # {category.name}
+                    </Category>
                   ))}
                 </Detail>
               </InfoDetail>
