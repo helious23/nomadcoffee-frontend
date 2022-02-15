@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { seeCoffeeShops_seeCoffeeShops } from "../../__generated__/seeCoffeeShops";
 import defaultImage from "../../asset/default_cafe_img.jpeg";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import Avatar from "../Avatar";
 import { Category, FatText } from "../shared";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -11,6 +11,8 @@ import { scrollVar } from "../../apollo";
 import LoginNotice from "../LoginNotice";
 import { useState } from "react";
 import Likes from "../Likes";
+import { seeCategory_seeCategory } from "../../__generated__/seeCategory";
+
 
 interface ICoffeeShopPhotoProps {
   url: string | null | undefined;
@@ -55,12 +57,14 @@ const HeaderDetail = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  width: 70%;
 `;
 
 const IconContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  width:30%;
 `;
 
 const UserLink = styled(Link)`
@@ -159,7 +163,7 @@ const MoreInfo = styled(Link)`
   align-items: center;
 `;
 
-const CoffeeShop: React.FC<seeCoffeeShops_seeCoffeeShops> = ({
+const CoffeeShop: React.FC<seeCoffeeShops_seeCoffeeShops | seeCategory_seeCategory> = ({
   id,
   name,
   photos,
@@ -173,6 +177,7 @@ const CoffeeShop: React.FC<seeCoffeeShops_seeCoffeeShops> = ({
   user,
 }) => {
   const [open, setOpen] = useState(false);
+  const history = useHistory()
 
   const handleOpen = () => {
     setOpen(true);
@@ -220,7 +225,7 @@ const CoffeeShop: React.FC<seeCoffeeShops_seeCoffeeShops> = ({
           <DetailContainer>
             <CategoryContainer>
               {categories.slice(0, 3).map((category) => (
-                <Category key={category.slug}># {category.name}</Category>
+                <Category key={category.slug} onClick={() => history.push(`/category/${category.slug}`)}># {category.name}</Category>
               ))}
             </CategoryContainer>
             <MoreInfoContainer>

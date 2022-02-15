@@ -164,7 +164,7 @@ const CreateOrEditComment = () => {
   const { state } = useLocation<ILocationProps>();
   const { shopId } = useParams<IParamsProps>();
   const { data: userData } = useMe();
-  const [rating, setRating] = useState(5);
+  const [rating, setRating] = useState(state?.rating || 5);
   const [open, setOpen] = useState(false);
   const history = useHistory();
 
@@ -216,7 +216,7 @@ const CreateOrEditComment = () => {
         data: {
           seeCoffeeShop: {
             ...queryResult.seeCoffeeShop,
-            averageRating: (
+            averageRating: +(
               (queryResult.seeCoffeeShop.averageRating *
                 queryResult.seeCoffeeShop.commentNumber +
                 rating) /
@@ -303,6 +303,28 @@ const CreateOrEditComment = () => {
 
   const updateEditCommentCache = (id: number) => {
     const { cache } = client;
+    const queryResult = client.readQuery({
+      query: SEE_COFFEE_SHOP_QUERY,
+      variables: {
+        id: +shopId,
+      },
+    });
+    console.log(queryResult)
+    if(queryResult){
+      client.writeQuery({
+        query: SEE_COFFEE_SHOP_QUERY,
+        variables:{
+          id:+shopId
+        },
+        data:{
+          seeCoffeeShop:{
+            ...queryResult.seeCoffeeShop,
+            averageRating:+(((queryResult.seeCoffeeShop.averageRating * queryResult.seeCoffeeShop.commentNumber) - queryResult.seeCoffeeShop.averageRating + rating)/queryResult.seeCoffeeShop.commentNumber).toFixed(2)
+          }
+          
+        }
+      })
+    }
     const payload = getValues("payload");
     const editedComment = {
       __typename: "Comment",

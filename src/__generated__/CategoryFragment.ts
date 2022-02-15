@@ -4,16 +4,13 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: seeCategories
+// GraphQL fragment: CategoryFragment
 // ====================================================
 
-export interface seeCategories_seeCategories {
+export interface CategoryFragment {
   __typename: "Category";
   id: number;
   name: string;
   slug: string;
-}
-
-export interface seeCategories {
-  seeCategories: (seeCategories_seeCategories | null)[] | null;
+  totalShops: number;
 }

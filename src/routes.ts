@@ -9,6 +9,7 @@ const routes = {
   createCafe: "/add",
   search: "/search",
   comment: "/comment/:shopId",
+  category:"/category/:categorySlug"
 };
 
 export default routes;

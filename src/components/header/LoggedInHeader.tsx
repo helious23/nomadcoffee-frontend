@@ -106,7 +106,7 @@ const LoggedInHeader: React.FC<ILoggedInHeaderProps> = ({ menuAnimation }) => {
   return (
     <IconsContainer>
       <Icon>
-        <Link to={routes.home}>
+        <Link to={`/category/케익`}>
           <HeaderText>카테고리</HeaderText>
         </Link>
       </Icon>

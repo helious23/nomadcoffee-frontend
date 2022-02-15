@@ -49,6 +49,11 @@ export const LogOutPage = styled.div`
   cursor: pointer;
 `;
 
+export const Title = styled.div`
+  color: ${(props) => props.theme.accent};
+  font-size: 1.5rem;
+`;
+
 export const IconsContainer = styled.div`
   display: flex;
   align-items: center;
@@ -76,6 +81,11 @@ export const Category = styled.div`
   border-radius: 5px;
   margin: 0.2rem 0;
   margin-right: 0.5rem;
+  cursor: pointer;
+  :hover{
+    background-color: ${(props) => props.theme.accent};
+    color:${props => props.theme.bgColor}
+  }
 `;
 
 export const OutlineBtn = styled.div`

@@ -4,7 +4,8 @@ module.exports = {
     tagName: "gql",
     service: {
       name: "nomadcoffee-backend",
-      url: "http://localhost:4000/graphql",
+      url:"https://nomad-coffee-backend-challenge.herokuapp.com/graphql"
+      // url: "http://localhost:4000/graphql",
     },
   },
 };

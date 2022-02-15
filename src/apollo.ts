@@ -44,7 +44,8 @@ const uploadHttpLink = createUploadLink({
   uri:
     process.env.NODE_ENV === "production"
       ? "https://nomad-coffee-backend-challenge.herokuapp.com/graphql"
-      : "http://localhost:4000/graphql",
+      // : "http://localhost:4000/graphql",
+      :"https://nomad-coffee-backend-challenge.herokuapp.com/graphql"
 });
 
 const onErrorLink = onError(({ graphQLErrors, networkError }) => {

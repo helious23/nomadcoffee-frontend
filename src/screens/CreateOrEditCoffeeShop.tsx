@@ -49,11 +49,12 @@ const DELETE_COFFEESHOP_PHOTO = gql`
   }
 `;
 
-const SEE_CATEGORIES = gql`
+export const SEE_CATEGORIES = gql`
   query seeCategories {
     seeCategories {
       id
       name
+      slug
     }
   }
 `;

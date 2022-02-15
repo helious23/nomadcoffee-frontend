@@ -53,3 +53,12 @@ export const SHOP_DETAIL_FRAGMENT = gql`
   }
   ${SHOP_FRAGMENT}
 `;
+
+export const CATEGORY_FRAGMENT = gql`
+  fragment CategoryFragment on Category {
+    id
+    name
+    slug
+    totalShops
+  }
+`

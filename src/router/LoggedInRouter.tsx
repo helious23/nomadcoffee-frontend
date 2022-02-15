@@ -9,6 +9,7 @@ import ShopDetail from "../screens/ShopDetail";
 import CreateOrEditCoffeeShop from "../screens/CreateOrEditCoffeeShop";
 import CreateOrEditComment from "../screens/CreateOrEditComment";
 import EditProfile from "../screens/EditProfile";
+import Category from "../screens/Category";
 
 const LoggedInRouter = () => {
   return (
@@ -43,6 +44,11 @@ const LoggedInRouter = () => {
         <Route path={routes.comment} exact>
           <Layout screen="comment">
             <CreateOrEditComment />
+          </Layout>
+        </Route>
+        <Route path={routes.category} exact>
+          <Layout screen="other">
+            <Category />
           </Layout>
         </Route>
         <Route>

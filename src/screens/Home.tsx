@@ -11,6 +11,7 @@ import {
 import { SHOP_DETAIL_FRAGMENT } from "../fragments";
 import { useEffect, useRef } from "react";
 import { useIntersectionObserver } from "../hooks/useIntersectionObserver";
+import { Title } from "../components/shared";
 
 export const SEE_COFFEE_SHOPS_QUERY = gql`
   query seeCoffeeShops($lastId: Int) {
@@ -23,10 +24,7 @@ export const SEE_COFFEE_SHOPS_QUERY = gql`
 
 const Container = styled.div``;
 
-const Title = styled.div`
-  color: ${(props) => props.theme.accent};
-  font-size: 1.5rem;
-`;
+
 
 const Home = () => {
   const { data, loading, fetchMore } = useQuery<
