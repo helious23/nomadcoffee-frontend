@@ -50,5 +50,5 @@ export interface seeCoffeeShops {
 }
 
 export interface seeCoffeeShopsVariables {
-  lastId?: number | null;
+  offset: number;
 }

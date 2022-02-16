@@ -3,6 +3,7 @@ import { setContext } from "@apollo/client/link/context";
 import routes from "./routes";
 import { createUploadLink } from "apollo-upload-client";
 import { onError } from "@apollo/client/link/error";
+import { offsetLimitPagination } from "@apollo/client/utilities";
 
 const TOKEN = "TOKEN";
 const DARK_MODE = "DARK_MODE";
@@ -75,12 +76,7 @@ export const client = new ApolloClient({
       // },
       Query: {
         fields: {
-          seeCoffeeShops: {
-            keyArgs: false,
-            merge(existing = [], incoming: any[]) {
-              return [...existing, ...incoming];
-            },
-          },
+          seeCoffeeShops: offsetLimitPagination(),
         },
       },
     },

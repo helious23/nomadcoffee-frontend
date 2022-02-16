@@ -14,8 +14,8 @@ import { useIntersectionObserver } from "../hooks/useIntersectionObserver";
 import { Title } from "../components/shared";
 
 export const SEE_COFFEE_SHOPS_QUERY = gql`
-  query seeCoffeeShops($lastId: Int) {
-    seeCoffeeShops(lastId: $lastId) {
+  query seeCoffeeShops($offset: Int!) {
+    seeCoffeeShops(offset: $offset) {
       ...ShopDetailFragment
     }
   }
@@ -24,13 +24,15 @@ export const SEE_COFFEE_SHOPS_QUERY = gql`
 
 const Container = styled.div``;
 
-
-
 const Home = () => {
   const { data, loading, fetchMore } = useQuery<
     seeCoffeeShops,
     seeCoffeeShopsVariables
-  >(SEE_COFFEE_SHOPS_QUERY);
+  >(SEE_COFFEE_SHOPS_QUERY, {
+    variables: {
+      offset: 0,
+    },
+  });
 
   const ref = useRef<HTMLDivElement>(null);
   // const isBottomIntersection = useIntersectionObserver(
@@ -42,10 +44,11 @@ const Home = () => {
   // console.log(isBottomIntersection);
 
   const dataLength = data?.seeCoffeeShops?.length ?? 0;
-  const moreFetch = async (lastId: number) => {
-    await fetchMore({
+  const moreFetch = (offset: number) => {
+    console.log(offset);
+    fetchMore({
       variables: {
-        lastId,
+        offset,
       },
     });
   };
@@ -67,8 +70,7 @@ const Home = () => {
       <InfiniteScroll
         dataLength={dataLength}
         next={() =>
-          data?.seeCoffeeShops &&
-          moreFetch(data.seeCoffeeShops[dataLength - 1]?.id!)
+          data?.seeCoffeeShops && moreFetch(data.seeCoffeeShops.length)
         }
         hasMore={true}
         loader={null}

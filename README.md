@@ -39,6 +39,7 @@ Making NomadCoffee Frontend with Create React App, Apollo Client, Graphql, Types
 
 ### To Do
 - [x] AverageRating cache bug fix (create, edit, delete comment)
+- [ ] AverageRating edit bug fix
 - [x] See Categories
 - [x] See CoffeeShop by category
 - [x] See Wishlist
