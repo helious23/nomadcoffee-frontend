@@ -45,7 +45,6 @@ const Home = () => {
 
   const dataLength = data?.seeCoffeeShops?.length ?? 0;
   const moreFetch = (offset: number) => {
-    console.log(offset);
     fetchMore({
       variables: {
         offset,
