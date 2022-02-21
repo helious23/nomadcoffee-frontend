@@ -7,30 +7,22 @@
 // GraphQL query operation: seeProfile
 // ====================================================
 
-export interface seeProfile_seeProfile_shops_results_photos {
+export interface seeProfile_seeProfile_shops_photos {
   __typename: "CoffeeShopPhoto";
   url: string;
 }
 
-export interface seeProfile_seeProfile_shops_results {
+export interface seeProfile_seeProfile_shops {
   __typename: "CoffeeShop";
   id: number;
   name: string;
   latitude: string;
   longitude: string;
   slug: string;
-  photos: (seeProfile_seeProfile_shops_results_photos | null)[] | null;
+  photos: (seeProfile_seeProfile_shops_photos | null)[] | null;
   likes: number;
   commentNumber: number;
   isLiked: boolean;
-}
-
-export interface seeProfile_seeProfile_shops {
-  __typename: "MyShopResult";
-  ok: boolean;
-  error: string | null;
-  totalPages: number | null;
-  results: (seeProfile_seeProfile_shops_results | null)[] | null;
 }
 
 export interface seeProfile_seeProfile {
@@ -46,7 +38,7 @@ export interface seeProfile_seeProfile {
   totalFollowers: number;
   isFollowing: boolean;
   isMe: boolean;
-  shops: seeProfile_seeProfile_shops;
+  shops: (seeProfile_seeProfile_shops | null)[] | null;
 }
 
 export interface seeProfile {
@@ -55,5 +47,5 @@ export interface seeProfile {
 
 export interface seeProfileVariables {
   id: number;
-  page: number;
+  offset: number;
 }

@@ -42,7 +42,7 @@ const TOGGLE_FOLLOW_USER = gql`
 `;
 
 const SEE_PROFILE_QUERY = gql`
-  query seeProfile($id: Int!, $page: Int!) {
+  query seeProfile($id: Int!, $offset: Int!) {
     seeProfile(id: $id) {
       id
       name
@@ -55,13 +55,8 @@ const SEE_PROFILE_QUERY = gql`
       totalFollowers
       isFollowing
       isMe
-      shops(page: $page) {
-        ok
-        error
-        totalPages
-        results {
-          ...ShopFragment
-        }
+      shops(offset: $offset) {
+        ...ShopFragment
       }
     }
   }
@@ -193,7 +188,7 @@ interface IParams {
 
 const Profile = () => {
   const { userId } = useParams<IParams>();
-  const [page, setPage] = useState(1);
+
   const { data: userData } = useMe();
   const isLoggedIn = isLoggedInVar();
   const history = useHistory();
@@ -272,7 +267,7 @@ const Profile = () => {
     {
       variables: {
         id: +userId,
-        page,
+        offset: 0,
       },
     }
   );
@@ -358,8 +353,8 @@ const Profile = () => {
         </Column>
       </Header>
       <Grid>
-        {data?.seeProfile?.shops.results &&
-          data?.seeProfile?.shops?.results
+        {data?.seeProfile?.shops &&
+          data?.seeProfile?.shops
             .map(
               (shop) =>
                 shop && (

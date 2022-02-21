@@ -13,7 +13,6 @@ import { useState } from "react";
 import Likes from "../Likes";
 import { seeCategory_seeCategory } from "../../__generated__/seeCategory";
 
-
 interface ICoffeeShopPhotoProps {
   url: string | null | undefined;
 }
@@ -64,7 +63,7 @@ const IconContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  width:30%;
+  width: 30%;
 `;
 
 const UserLink = styled(Link)`
@@ -163,7 +162,9 @@ const MoreInfo = styled(Link)`
   align-items: center;
 `;
 
-const CoffeeShop: React.FC<seeCoffeeShops_seeCoffeeShops | seeCategory_seeCategory> = ({
+const CoffeeShop: React.FC<
+  seeCoffeeShops_seeCoffeeShops | seeCategory_seeCategory
+> = ({
   id,
   name,
   photos,
@@ -177,7 +178,7 @@ const CoffeeShop: React.FC<seeCoffeeShops_seeCoffeeShops | seeCategory_seeCatego
   user,
 }) => {
   const [open, setOpen] = useState(false);
-  const history = useHistory()
+  const history = useHistory();
 
   const handleOpen = () => {
     setOpen(true);
@@ -225,14 +226,19 @@ const CoffeeShop: React.FC<seeCoffeeShops_seeCoffeeShops | seeCategory_seeCatego
           <DetailContainer>
             <CategoryContainer>
               {categories.slice(0, 3).map((category) => (
-                <Category key={category.slug} onClick={() => history.push(`/category/${category.slug}`)}># {category.name}</Category>
+                <Category
+                  key={category.slug}
+                  onClick={() => history.push(`/category/${category.slug}`)}
+                >
+                  # {category.name}
+                </Category>
               ))}
             </CategoryContainer>
             <MoreInfoContainer>
               {open ? (
                 <LoginNotice
                   handleClose={handleClose}
-                  text={`가고 싶은 식당을`}
+                  text={`가고 싶은 카페를`}
                   text2={"저장할 수 있어요"}
                 />
               ) : null}
