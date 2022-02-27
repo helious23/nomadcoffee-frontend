@@ -82,21 +82,14 @@ const TextArea = styled.textarea<{ hasError: boolean }>`
     ${(props) => (props.hasError ? "tomato" : props.theme.borderColor)};
   border-radius: 3px;
   font-size: 1rem;
-  z-index: 10;
+  z-index: 0;
   line-height: 1.5rem;
   white-space: pre-wrap;
   background-color: ${(props) => props.theme.boxBgColor};
   box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
-`;
-
-const TextPlaceholder = styled.div<{ invisible: boolean }>`
-  position: absolute;
-  display: ${(props) => (props.invisible ? "none" : "block")};
-  top: 8.5rem;
-  left: 1.1rem;
-  font-size: 1rem;
-  color: ${(props) => props.theme.borderColor};
-  z-index: 10;
+  ::placeholder {
+    color: ${(props) => props.theme.borderColor};
+  }
 `;
 
 const RatingContainer = styled.div`
@@ -471,6 +464,7 @@ const CreateOrEditComment = () => {
               }}
               onChange={onHeightChange}
               hasError={Boolean(formState.errors.payload)}
+              placeholder={`${userData?.me?.username} 님, 방문하신 카페는 어떠셨나요? 카페의 분위기와 메뉴도 궁금해요!`}
             />
             <RatingContainer>
               <FaceContainer>
@@ -497,10 +491,6 @@ const CreateOrEditComment = () => {
                 </Rating>
               </FaceContainer>
             </RatingContainer>
-            <TextPlaceholder invisible={Boolean(currentValue)}>
-              {userData?.me?.username} 님, 방문하신 카페는 어떠셨나요? 카페의
-              분위기와 메뉴도 궁금해요!
-            </TextPlaceholder>
             <CountCountainer>
               <TextCount> {currentValue?.length || "0"} / 1000</TextCount>
             </CountCountainer>
