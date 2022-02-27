@@ -43,6 +43,6 @@ Making NomadCoffee Frontend with Create React App, Apollo Client, Graphql, Types
 - [x] See Categories
 - [x] See CoffeeShop by category
 - [x] See Wishlist
-- [ ] Search CoffeeShop by keyword,address, category or user(?)
+- [x] Search CoffeeShop by keyword, address, category
 - [ ] Infinite Scrolling Error Fix
 - [ ] Infinite Scrolling on Profile Component

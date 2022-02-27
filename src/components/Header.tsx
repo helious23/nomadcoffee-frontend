@@ -121,7 +121,7 @@ const Header = () => {
           <MainLogo />
           <SearchForm action="/search" method="GET" home={home}>
             <FontAwesomeIcon icon={faSearch} />
-            <SearchInput type="text" placeholder="검색" name="term" />
+            <SearchInput type="text" placeholder="검색" name="keyword" />
           </SearchForm>
         </Column>
         <Column>

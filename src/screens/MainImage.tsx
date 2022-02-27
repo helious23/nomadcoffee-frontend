@@ -41,7 +41,7 @@ const SubTitle = styled.div`
   margin-top: 0.8rem;
 `;
 
-const MainSearch = styled.form`
+const MainSearchForm = styled.form`
   margin-top: 2rem;
   display: flex;
   align-items: center;
@@ -106,7 +106,7 @@ const MainImage = () => {
           <Title>개발자들의 믿을 수 있는 솔직한 리뷰!</Title>
           <SubTitle>노마드 커피</SubTitle>
         </MainTitle>
-        <MainSearch>
+        <MainSearchForm action="/search" method="GET">
           <Icon
             fill="rgba(0,0,0,0.2)"
             viewBox="0 0 20 20"
@@ -118,9 +118,13 @@ const MainImage = () => {
               clipRule="evenodd"
             ></path>
           </Icon>
-          <MainInput type="text" placeholder="지역, 카페 이름 또는 카테고리" />
+          <MainInput
+            type="text"
+            name="keyword"
+            placeholder="지역, 카페 이름 또는 카테고리"
+          />
           <SearchBtn>검색</SearchBtn>
-        </MainSearch>
+        </MainSearchForm>
       </MainImg>
 
       <StoreImage>

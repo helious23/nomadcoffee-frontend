@@ -11,6 +11,7 @@ import CreateOrEditComment from "../screens/CreateOrEditComment";
 import EditProfile from "../screens/EditProfile";
 import Category from "../screens/Category";
 import LikedCoffeeShops from "../screens/LikedCoffeeShops";
+import Search from "../screens/Search";
 
 const LoggedInRouter = () => {
   return (
@@ -55,6 +56,11 @@ const LoggedInRouter = () => {
         <Route path={routes.likes} exact>
           <Layout screen="other">
             <LikedCoffeeShops />
+          </Layout>
+        </Route>
+        <Route path={routes.search} exact>
+          <Layout screen="other">
+            <Search />
           </Layout>
         </Route>
         <Route>

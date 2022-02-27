@@ -9,6 +9,7 @@ import Login from "../screens/Login";
 import Profile from "../screens/Profile";
 import ShopDetail from "../screens/ShopDetail";
 import Category from "../screens/Category";
+import Search from "../screens/Search";
 
 const LoggedOutRouter = () => {
   return (
@@ -41,6 +42,11 @@ const LoggedOutRouter = () => {
         <Route path={routes.category} exact>
           <Layout screen="other">
             <Category />
+          </Layout>
+        </Route>
+        <Route path={routes.search} exact>
+          <Layout screen="other">
+            <Search />
           </Layout>
         </Route>
         <Route>
