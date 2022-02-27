@@ -9,7 +9,7 @@ import {
   faTrashAlt,
 } from "@fortawesome/free-regular-svg-icons";
 import { faPen, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
-import { useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { seeCoffeeShopComments_seeCoffeeShopComments } from "../../__generated__/seeCoffeeShopComments";
 import { useState } from "react";
 import { scrollVar } from "../../apollo";
@@ -40,7 +40,7 @@ const CommentContainer = styled.div`
   }
 `;
 
-const UserContainer = styled.div`
+const UserContainer = styled(Link)`
   display: flex;
   flex-direction: column;
   width: 10vw;
@@ -272,7 +272,7 @@ const Comment: React.FC<seeCoffeeShopComments_seeCoffeeShopComments> = ({
   };
   return (
     <CommentContainer>
-      <UserContainer>
+      <UserContainer to={`/profile/${user.id}`}>
         <Avatar url={user.avatarURL} size={4} />
         <UserName>{user.username}</UserName>
       </UserContainer>

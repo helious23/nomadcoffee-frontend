@@ -23,7 +23,7 @@ interface IAvatarMenuProps {
 const AvatarMenu = styled(motion.div)<IAvatarMenuProps>`
   transform-origin: top;
   width: 15rem;
-  height: 16rem;
+  height: 12rem;
   background-color: ${(props) => props.theme.menuBgColor};
   border-radius: 10px;
   position: absolute;
@@ -36,14 +36,14 @@ const AvatarMenu = styled(motion.div)<IAvatarMenuProps>`
   flex-direction: column;
   &:before {
     content: "";
-    border-left: 12px solid transparent;
-    border-right: 12px solid transparent;
-    border-bottom: 12px solid
+    border-left: 0.8rem solid transparent;
+    border-right: 0.8rem solid transparent;
+    border-bottom: 0.8rem solid
       ${(props) =>
         props.$mouseover ? props.theme.accent : props.theme.menuBgColor};
-    border-top: 12px solid none;
+    border-top: 0.8rem solid none;
     position: absolute;
-    top: -12px;
+    top: -0.8rem;
     right: 1.2rem;
   }
 `;
@@ -138,9 +138,6 @@ const LoggedInHeader: React.FC<ILoggedInHeaderProps> = ({ menuAnimation }) => {
             </MenuLink>
             <MenuLink to={routes.createCafe}>
               <MenuText>카페 등록하기</MenuText>
-            </MenuLink>
-            <MenuLink to={routes.search}>
-              <MenuText>검색</MenuText>
             </MenuLink>
             <MenuText position="bottom" onClick={() => logUserOut(history)}>
               로그아웃

@@ -309,21 +309,26 @@ const CreateOrEditComment = () => {
         id: +shopId,
       },
     });
-    console.log(queryResult)
-    if(queryResult){
+    // console.log(queryResult);
+    if (queryResult) {
       client.writeQuery({
         query: SEE_COFFEE_SHOP_QUERY,
-        variables:{
-          id:+shopId
+        variables: {
+          id: +shopId,
         },
-        data:{
-          seeCoffeeShop:{
+        data: {
+          seeCoffeeShop: {
             ...queryResult.seeCoffeeShop,
-            averageRating:+(((queryResult.seeCoffeeShop.averageRating * queryResult.seeCoffeeShop.commentNumber) - queryResult.seeCoffeeShop.averageRating + rating)/queryResult.seeCoffeeShop.commentNumber).toFixed(2)
-          }
-          
-        }
-      })
+            averageRating: +(
+              (queryResult.seeCoffeeShop.averageRating *
+                queryResult.seeCoffeeShop.commentNumber -
+                queryResult.seeCoffeeShop.averageRating +
+                rating) /
+              queryResult.seeCoffeeShop.commentNumber
+            ).toFixed(2),
+          },
+        },
+      });
     }
     const payload = getValues("payload");
     const editedComment = {

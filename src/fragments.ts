@@ -24,6 +24,7 @@ export const COMMENT_FRAGMENT = gql`
     isMine
     rating
     user {
+      id
       username
       avatarURL
     }
@@ -61,4 +62,4 @@ export const CATEGORY_FRAGMENT = gql`
     slug
     totalShops
   }
-`
+`;

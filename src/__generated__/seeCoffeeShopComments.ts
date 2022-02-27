@@ -9,6 +9,7 @@
 
 export interface seeCoffeeShopComments_seeCoffeeShopComments_user {
   __typename: "User";
+  id: number;
   username: string;
   avatarURL: string | null;
 }

@@ -9,6 +9,7 @@
 
 export interface CommentFragment_user {
   __typename: "User";
+  id: number;
   username: string;
   avatarURL: string | null;
 }
